@@ -1,0 +1,164 @@
+* {
+    box-sizing: border-box;
+    line-height: normal;
+    transition: background-color 0.5s ease-in-out;
+}
+
+body {
+    background-color: black;
+    box-sizing: border-box;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* In your CSS file (e.g., App.css) */
+.scrollbar-custom {
+    scrollbar-width: none;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+    width: none;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background: #6C63FF;
+    border-radius: 10px;
+}
+
+
+#root {
+    height: 100vh;
+}
+
+#searchInput:-webkit-autofill,
+#searchInput:-webkit-autofill:focus,
+#searchInput:-webkit-autofill:hover,
+#searchInput:-webkit-autofill:active {
+    background-color: transparent !important;
+    color: none !important;
+    -webkit-text-fill-color: black;
+    -webkit-box-shadow: 0 0 0 1000px inset #f7f7ff00 !important;
+    /* Set light background */
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Example for dark mode */
+#searchInput.dark::placeholder {
+    color: #9ca3af;
+
+}
+
+#searchInput.light::placeholder {
+    color: #4b5563;
+}
+
+#searchInput[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+
+.selector {
+    all: unset;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #6C63FF;
+    padding: 0px 12px 0px 15px;
+    border-radius: 7px;
+    width: 130px;
+    position: relative;
+    overflow: visible;
+    line-height: normal;
+    /* Reset line-height to default */
+    min-height: 41px;
+    transition: 0.3s ease-in-out;
+}
+
+.selector:hover {
+    background-color: #7B73FF;
+    box-shadow: 0 0 10px rgba(124, 115, 255, 0.6);
+    cursor: pointer;
+}
+
+.save div:hover {
+    background-color: #7B73FF;
+    box-shadow: 0 0 10px rgba(124, 115, 255, 0.6);
+    cursor: pointer;
+}
+
+.modalBox {
+    transform: translateY(-60px);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+}
+
+.modalBox.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+#todoContentInput:focus {
+    outline: none;
+    border-color: white;
+}
+
+#todoTitle:focus {
+    outline: none;
+    border-color: white;
+}
+
+.selector>svg {
+    flex-shrink: 0;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.dropdownSvgContainer {
+    border-left: 1px solid white;
+}
+
+.dropdownSvgContainer svg {
+    transition: transform 0.3s ease;
+}
+
+.dropdownBox {
+    z-index: 200;
+}
+
+@media (max-width:768px) {
+    .search {
+        flex-wrap: wrap;
+    }
+
+    .dropdownBox {
+        width: 100%;
+    }
+
+    .drop {
+        width: calc(100% - 41.98px);
+    }
+
+    .selector {
+        width: calc(100% - 27.98px);
+    }
+
+    .addTodo {
+        width: 100%;
+        border-radius: 7px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+    }
+
+    .addTodo svg {
+        width: 20px;
+        height: 20px;
+    }
+}
