@@ -25,14 +25,31 @@ export const Todo = (props) => {
         <div className={`w-[100%] rounded-[0px] shrink-0 border-t ${props.isDark ? 'border-white' : 'border-black'} pt-[15px] p-2 flex justify-between items-center`}>
             <div className="flex gap-3 items-center sm:w-[90%]">
                 {/* Checkbox: controls completed status via parent */}
-                <input
-                    type="checkbox"
-                    id={`checkbox-${props.id}`}
-                    checked={props.completed} // Controlled by parent
-                    onChange={() => props.onToggleCompleted(props.id)} // Toggle completed in parent
-                    className='cursor-pointer'
-                    name="Title"
-                />
+                <label htmlFor={`checkbox-${props.id}`} className="relative flex items-center cursor-pointer group">
+                    {/* Visually hidden native checkbox */}
+                    <input
+                        type="checkbox"
+                        id={`checkbox-${props.id}`}
+                        checked={props.completed}
+                        onChange={() => props.onToggleCompleted(props.id)}
+                        className="sr-only peer"
+                        name="Title"
+                    />
+                    {/* Custom checkbox visual */}
+                    <span
+                        className={`w-6 h-6 flex items-center justify-center rounded border-2 transition-colors duration-200
+      ${props.completed ? 'bg-[#6C63FF] border-[#6C63FF]' : (props.isDark ? 'border-gray-400' : 'border-gray-500')}
+      mr-3
+    `}
+                    >
+                        {props.completed && (
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        )}
+                    </span>
+                </label>
+
                 <div className='flex flex-col gap-2'>
                     {isEditing ? (
                         <>
