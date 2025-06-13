@@ -60,13 +60,13 @@ export const Todo = (props) => {
                             {/* Display title, strikethrough if completed */}
                             <label
                                 htmlFor={`checkbox-${props.id}`}
-                                className={`text-[1.2rem] break-words whitespace-normal w-full cursor-pointer ${props.completed ? 'line-through text-gray-200' : 'text-blue-300'}`}
+                                className={`text-[1.2rem] break-words whitespace-normal w-full cursor-pointer ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : 'text-blue-300'}`}
                             >
                                 {props.title}
                             </label>
                             {/* Display content, strikethrough if completed */}
                             {props.content && (
-                                <div className={`content ${props.completed ? 'line-through text-gray-400' : 'text-white'}`}>
+                                <div className={`content ${props.completed ? 'line-through text-gray-400' : ''}`}>
                                     {props.content}
                                 </div>
                             )}
