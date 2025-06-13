@@ -25,9 +25,28 @@ function App() {
     return savedMode ? savedMode === 'dark' : true;
   });
 
-  const [todos, setTodos] = useState(() => { // Main todos array (with completed property)
+  // const [todos, setTodos] = useState(() => { // Main todos array (with completed property)
+  //   const stored = localStorage.getItem('todos');
+  //   return stored ? JSON.parse(stored) : [];
+  // });
+  const [todos, setTodos] = useState(() => {
     const stored = localStorage.getItem('todos');
-    return stored ? JSON.parse(stored) : [];
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // If stored is an empty array, show default todo
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+    // Default todo for new users or empty storage
+    return [
+      {
+        id: Date.now(),
+        title: "Hey wassup",
+        content: "Avtar this side, I made this todo app using vite and react, used tailwind css for styling and of course html, hope you like it :)",
+        completed: false
+      }
+    ];
   });
 
   const [todoTitle, setTodoTitle] = useState(''); // New todo title input
@@ -101,7 +120,8 @@ function App() {
   const handleShowModal = () => setIsVisible(true); // Show modal
   const handleHideModal = () => { // Hide modal and clear content input
     setIsVisible(false);
-    document.getElementById('todoContentInput').value = '';
+    setTodoTitle('');      // Clear the title input
+    setTodoContent('');    // Clear the content input
   };
 
   const options = ['ALL', 'COMPLETE', 'INCOMPLETE']; // Dropdown options
@@ -312,7 +332,6 @@ function App() {
                 <input
                   id="todoContentInput"
                   type="text"
-                  required
                   value={todoContent}
                   autoComplete="off"
                   autoCorrect="off"
@@ -344,7 +363,7 @@ function App() {
             </form>
           </div>
         </div>
-        <div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 pb-[15px] px-[15px] gap-1 max-h-[56%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
+        {filteredTodos.length > 0 ? (<div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 pb-[15px] px-[15px] gap-1 max-h-[56%] min-h-[20%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
         ${isDark ? 'before:bg-black' : 'before:bg-[#F7F7F7]'}
         before:h-[1px]
         before:left-0
@@ -372,12 +391,16 @@ function App() {
             ))
           ) : (''
           )}
-        </div>
+        </div>):(
+          <div className={`flex flex-col items-center justify-start px-5 py-10 h-[50vh] w-full ${isDark ? 'bg-black' : 'bg-[#F7F7F7]'}`}>
+            <h2 className={`text-center text-[1.5rem] ${isDark ? 'text-white' : 'text-black'}`}>No Todos Found , Add some ☺️</h2>
+          </div>
+        )}
       </div>
       {showUndo && recentlyDeleted.length > 0 && (
         <button
           onClick={handleUndo}
-          className="fixed cursor-pointer hover:bg-[#6bb7ff] top-8 right-8 z-50 bg-[#6C63FF] text-white px-6 py-3 rounded-full shadow-lg animate-fade-in"
+          className="fixed cursor-pointer hover:bg-[#6bb7ff] bottom-8 left-8 z-50 bg-[#6C63FF] text-white px-6 py-3 rounded-full shadow-lg animate-fade-in"
           style={{ transition: 'opacity 0.3s' }}
         >
           Undo Delete
