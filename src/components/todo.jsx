@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../output.css';
+// import '../output.css';
 
 export const Todo = (props) => {
     // State for edit mode
@@ -60,7 +60,7 @@ export const Todo = (props) => {
                             {/* Display title, strikethrough if completed */}
                             <label
                                 htmlFor={`checkbox-${props.id}`}
-                                className={`text-[1.2rem] break-words whitespace-normal w-full cursor-pointer ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : 'text-blue-300'}`}
+                                className={`text-[1.2rem] break-words whitespace-normal w-full cursor-pointer ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`}
                             >
                                 {props.title}
                             </label>

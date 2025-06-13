@@ -4,7 +4,7 @@ import viteLogo from '/vite.svg';
 import close from './assets/close.svg';
 import plus from './assets/plus.svg';
 import './App.css';
-import './output.css';
+// import './output.css';
 import { Todo } from './components/todo.jsx';
 
 function App() {
@@ -32,7 +32,8 @@ function App() {
 
   const [todoTitle, setTodoTitle] = useState(''); // New todo title input
   const [todoContent, setTodoContent] = useState(''); // New todo content input
-  const [recentlyDeleted, setRecentlyDeleted] = useState(null); // Last deleted todo (for undo)
+  const [recentlyDeleted, setRecentlyDeleted] = useState([]); // Store multiple deleted todos
+  // Last deleted todo (for undo)
   const [showUndo, setShowUndo] = useState(false); // Undo button visibility
 
   // ======= REFS =======
@@ -128,24 +129,39 @@ function App() {
     }
   };
 
-  const handleDeleteTodo = (id) => { // Delete todo and show undo
+  const handleDeleteTodo = (id) => {
     const todoToDelete = todos.find(todo => todo.id === id);
     setTodos(prev => prev.filter(todo => todo.id !== id));
-    setRecentlyDeleted(todoToDelete);
+    setRecentlyDeleted(prev => [todoToDelete, ...prev]); // Add to stack
     setShowUndo(true);
+
+    // Clear and restart timer
     if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     undoTimeoutRef.current = setTimeout(() => {
       setShowUndo(false);
-      setRecentlyDeleted(null);
+      setRecentlyDeleted([]); // Clear stack after 5s
     }, 5000);
   };
 
-  const handleUndo = () => { // Undo delete
-    if (recentlyDeleted) {
-      setTodos(prev => [recentlyDeleted, ...prev]);
-      setShowUndo(false);
-      setRecentlyDeleted(null);
-      if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+  const handleUndo = () => {
+    if (recentlyDeleted.length > 0) {
+      const [lastDeleted, ...rest] = recentlyDeleted;
+      setTodos(prev => [lastDeleted, ...prev]);
+      setRecentlyDeleted(rest);
+
+      if (rest.length > 0) {
+        // Restart timer for next undo
+        setShowUndo(true);
+        if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+        undoTimeoutRef.current = setTimeout(() => {
+          setShowUndo(false);
+          setRecentlyDeleted([]);
+        }, 5000);
+      } else {
+        // No more to undo, hide button and clear timer
+        setShowUndo(false);
+        if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+      }
     }
   };
 
@@ -358,7 +374,7 @@ function App() {
           )}
         </div>
       </div>
-      {showUndo && recentlyDeleted && (
+      {showUndo && recentlyDeleted.length > 0 && (
         <button
           onClick={handleUndo}
           className="fixed cursor-pointer hover:bg-[#6bb7ff] top-8 right-8 z-50 bg-[#6C63FF] text-white px-6 py-3 rounded-full shadow-lg animate-fade-in"
@@ -367,7 +383,6 @@ function App() {
           Undo Delete
         </button>
       )}
-
     </div >
   );
 }
