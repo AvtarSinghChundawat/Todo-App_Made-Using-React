@@ -363,7 +363,7 @@ function App() {
             </form>
           </div>
         </div>
-        {filteredTodos.length > 0 ? (<div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 pb-[15px] px-[15px] gap-1 max-h-[56%] min-h-[20%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
+        {filteredTodos.length > 0 ? (<div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 pb-[15px] px-[15px] gap-1 max-h-[56%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
         ${isDark ? 'before:bg-black' : 'before:bg-[#F7F7F7]'}
         before:h-[1px]
         before:left-0
