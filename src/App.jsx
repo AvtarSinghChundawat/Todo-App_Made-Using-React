@@ -225,7 +225,7 @@ function App() {
   // ======= RENDER =======
 
   return (
-    <div className={`wrapper w-screen flex justify-center h-full ${isDark ? 'bg-black text-white' : 'bg-[#F7F7F7] text-black'}`}>
+    <div className={`wrapper w-screen flex justify-center h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#F7F7F7] text-black'}`}>
       <div className="main flex flex-col items-center w-[80%] sm:w-[70%]">
         <header className='flex w-screen justify-center items-center p-5 text-[2em] mt-5'>TODO LIST</header>
         <div className="search w-full flex gap-4">
@@ -364,7 +364,7 @@ function App() {
           </div>
         </div>
         {filteredTodos.length > 0 ? (<div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 pb-[15px] px-[15px] gap-1 max-h-[56%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
-        ${isDark ? 'before:bg-black' : 'before:bg-[#F7F7F7]'}
+        ${isDark ? 'before:bg-[#343434]' : 'before:bg-[#F7F7F7]'}
         before:h-[1px]
         before:left-0
         before:pointer-events-none
@@ -392,7 +392,7 @@ function App() {
           ) : (''
           )}
         </div>):(
-          <div className={`flex flex-col items-center justify-start px-5 py-10 h-[50vh] w-full ${isDark ? 'bg-black' : 'bg-[#F7F7F7]'}`}>
+          <div className={`flex flex-col items-center justify-start px-5 py-10 h-[50vh] w-full ${isDark ? 'bg-[#343434]' : 'bg-[#F7F7F7]'}`}>
             <h2 className={`text-center text-[1.5rem] ${isDark ? 'text-white' : 'text-black'}`}>No Todos Found , Add some ☺️</h2>
           </div>
         )}

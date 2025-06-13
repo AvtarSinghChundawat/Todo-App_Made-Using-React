@@ -23,7 +23,7 @@ export const Todo = (props) => {
 
     return (
         <div className={`w-[100%] rounded-[0px] shrink-0 border-t ${props.isDark ? 'border-white' : 'border-black'} pt-[15px] p-2 flex justify-between items-center`}>
-            <div className="flex gap-3 items-center sm:w-[90%]">
+            <div className="flex gap-3 items-center w-[80%]">
                 {/* Checkbox: controls completed status via parent */}
                 <label htmlFor={`checkbox-${props.id}`} className="relative flex items-center cursor-pointer group">
                     {/* Visually hidden native checkbox */}
@@ -39,7 +39,6 @@ export const Todo = (props) => {
                     <span
                         className={`w-6 h-6 flex items-center justify-center rounded border-2 transition-colors duration-200
       ${props.completed ? 'bg-[#6C63FF] border-[#6C63FF]' : (props.isDark ? 'border-gray-400' : 'border-gray-500')}
-      mr-3
     `}
                     >
                         {props.completed && (
@@ -58,7 +57,7 @@ export const Todo = (props) => {
                                 autoComplete="off"
                                 autoCorrect="off"
                                 spellCheck={false}
-                                className={`text-blue-300 resize-none scrollbar-custom text-[1.2rem] w-full p-1 rounded ${props.isDark ? 'bg-gray-800' : 'bg-white'}`}
+                                className={`text-blue-300 scrollbar-custom text-[1.2rem] w-full p-1 rounded ${props.isDark ? 'bg-gray-800' : 'bg-white'}`}
                                 value={editTitle}
                                 onChange={e => setEditTitle(e.target.value)}
                             />
@@ -67,7 +66,7 @@ export const Todo = (props) => {
                                 autoComplete="off"
                                 autoCorrect="off"
                                 spellCheck={false}
-                                className={`w-full p-1 rounded resize-none scrollbar-custom ${props.isDark ? 'bg-gray-800' : 'bg-white'}`}
+                                className={`w-full p-1 rounded scrollbar-custom ${props.isDark ? 'bg-gray-800' : 'bg-white'}`}
                                 value={editContent}
                                 onChange={e => setEditContent(e.target.value)}
                             />
@@ -75,12 +74,10 @@ export const Todo = (props) => {
                     ) : (
                         <>
                             {/* Display title, strikethrough if completed */}
-                            <label
-                                htmlFor={`checkbox-${props.id}`}
-                                className={`text-[1.2rem] break-words whitespace-normal w-full cursor-pointer ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`}
+                            <div className={`text-[1.2rem] break-words whitespace-normal w-full ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`}
                             >
                                 {props.title}
-                            </label>
+                            </div>
                             {/* Display content, strikethrough if completed */}
                             {props.content && (
                                 <div className={`content ${props.completed ? 'line-through text-gray-400' : ''}`}>
