@@ -23,7 +23,7 @@ export const Todo = (props) => {
 
     return (
         <div className={`w-[100%] rounded-[0px] shrink-0 border-t ${props.isDark ? 'border-white' : 'border-black'} pt-[15px] p-2 flex justify-between items-center`}>
-            <div className="flex gap-3 items-center w-[80%]">
+            <div className="flex gap-3 items-center w-[76%]">
                 {/* Checkbox: controls completed status via parent */}
                 <label htmlFor={`checkbox-${props.id}`} className="relative flex items-center cursor-pointer group">
                     {/* Visually hidden native checkbox */}
