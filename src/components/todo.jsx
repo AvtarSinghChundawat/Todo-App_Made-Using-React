@@ -22,10 +22,10 @@ export const Todo = (props) => {
     // };
 
     return (
-        <div className={`w-[100%] rounded-[0px] shrink-0 border-t ${props.isDark ? 'border-white' : 'border-black'} pt-[15px] p-2 flex justify-between items-center`}>
-            <div className={`flex gap-3 items-center ${props.minimal ? 'w-full' : 'w-[76%]'}`}>
+        <div className={`w-[100%] rounded-[0px] shrink-0 border-t ${props.isDark ? 'border-white' : 'border-black'} pt-[15px] p-2 flex justify-between items-start`}>
+            <div className={`flex gap-3 ${props.minimal ? 'w-full' : 'w-[76%]'}`}>
                 {/* Checkbox: controls completed status via parent */}
-                <label htmlFor={`checkbox-${props.id}`} className={`relative flex items-center cursor-pointer group ${props.minimal ? 'hidden' : 'false'}`}>
+                <label htmlFor={`checkbox-${props.id}`} className={`relative flex cursor-pointer group ${props.minimal ? 'hidden' : 'false'}`}>
                     {/* Visually hidden native checkbox */}
                     <input
                         type="checkbox"
@@ -51,7 +51,7 @@ export const Todo = (props) => {
 
                 <div className='flex flex-col gap-2'>
                     {/* Display title, strikethrough if completed */}
-                    <div className={`text-[1.2rem] break-words whitespace-normal w-full ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`}
+                    <div className={`text-[1.2rem] break-words whitespace-normal w-full ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`} style={{ lineHeight: '0.8' }}
                     >
                         {props.title}
                     </div>
@@ -63,7 +63,7 @@ export const Todo = (props) => {
                     )}
                 </div>
             </div>
-            <div className={`flex gap-3 items-center ${props.minimal ? 'hidden' : 'false'}`}>
+            <div className={`flex gap-3 ${props.minimal ? 'hidden' : 'false'}`}>
                 {/* Edit/save icon */}
                 <div className='group hover:cursor-pointer' onClick={() => props.onEdit(props.id, props.title, props.content)}>
                     <svg className={`${props.isDark ? 'stroke-white' : 'stroke-black'} group-hover:stroke-green-400`}
