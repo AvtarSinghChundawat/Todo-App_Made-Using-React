@@ -356,7 +356,7 @@ function App() {
 
   return (
     <div className={`wrapper w-screen flex justify-center h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'}`}>
-      <div className="main flex flex-col items-center relative w-[80%] sm:w-[70%]">
+      <div className="main flex flex-col items-center relative w-[88%] sm:w-[70%]">
         <header className='flex w-screen justify-center items-center p-5 text-[2em]'>TODO APP</header>
         <div className="search w-full flex gap-4">
           <div className={`rounded-[7px] input flex w-full gap-1 items-center border ${isDark ? 'border-white' : 'border-black'} pr-2 pl-2`}>
