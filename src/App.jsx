@@ -27,47 +27,92 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentTodoId, setCurrentTodoId] = useState(null);
 
-  const textareaRef = useRef(null);
-  const isResizing = useRef(false);
-  const lastMouseY = useRef(0);
-  const lastHeight = useRef(0);
-  const mouseMoved = useRef(false);
+  const contentTextareaRef = useRef(null);
+  const isResizingUp = useRef(false);
+  const lastMouseYUp = useRef(0);
+  const lastHeightUp = useRef(0);
+  const mouseMovedUp = useRef(false);
 
-  function handleResizeMouseDown(e) {
+  const isResizingDown = useRef(false);
+  const lastMouseYDown = useRef(0);
+  const lastHeightDown = useRef(0);
+  const mouseMovedDown = useRef(false);
+
+
+  // bottom left icon logic (up resize)
+  function handleResizeUpMouseDown(e) {
     e.preventDefault();
-    isResizing.current = true;
-    mouseMoved.current = false;
-    lastMouseY.current = e.clientY;
-    lastHeight.current = textareaRef.current.offsetHeight;
+    isResizingUp.current = true;
+    mouseMovedUp.current = false;
+    lastMouseYUp.current = e.clientY;
+    lastHeightUp.current = contentTextareaRef.current.offsetHeight;
 
-    document.addEventListener('mousemove', handleResizeMouseMove);
-    document.addEventListener('mouseup', handleResizeMouseUp);
+    document.addEventListener('mousemove', handleResizeUpMouseMove);
+    document.addEventListener('mouseup', handleResizeUpMouseUp);
   }
 
-  function handleResizeMouseMove(e) {
-    mouseMoved.current = true;
-    if (!isResizing.current) return;
-    const diff = e.clientY - lastMouseY.current;
-    let newHeight = lastHeight.current + diff;
+  function handleResizeUpMouseMove(e) {
+    mouseMovedUp.current = true;
+    if (!isResizingUp.current) return;
+    const diff = e.clientY - lastMouseYUp.current;
+    let newHeight = lastHeightUp.current + diff;
     const minHeight = 64; // 4rem
-    const maxHeight = window.innerHeight * 0.4; // 40vh, adjust as needed
+    const maxHeight = window.innerHeight * 0.4; // 40vh
     newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
-    textareaRef.current.style.height = `${newHeight}px`;
+    contentTextareaRef.current.style.height = `${newHeight}px`;
   }
 
-  function handleResizeMouseUp() {
-    if (!mouseMoved.current) {
-      // This was a click, not a drag
-      const textarea = textareaRef.current;
+  function handleResizeUpMouseUp() {
+    if (!mouseMovedUp.current) {
+      // Click: decrease height
+      const textarea = contentTextareaRef.current;
       if (textarea) {
+        const minHeight = 64;
         const currentHeight = textarea.offsetHeight;
+        textarea.style.height = Math.max(minHeight, currentHeight - 40) + 'px';
+      }
+    }
+    isResizingUp.current = false;
+    document.removeEventListener('mousemove', handleResizeUpMouseMove);
+    document.removeEventListener('mouseup', handleResizeUpMouseUp);
+  }
+
+  // bottom right icon logic (down resize)
+  function handleResizeDownMouseDown(e) {
+    e.preventDefault();
+    isResizingDown.current = true;
+    mouseMovedDown.current = false;
+    lastMouseYDown.current = e.clientY;
+    lastHeightDown.current = contentTextareaRef.current.offsetHeight;
+
+    document.addEventListener('mousemove', handleResizeDownMouseMove);
+    document.addEventListener('mouseup', handleResizeDownMouseUp);
+  }
+
+  function handleResizeDownMouseMove(e) {
+    mouseMovedDown.current = true;
+    if (!isResizingDown.current) return;
+    const diff = e.clientY - lastMouseYDown.current;
+    let newHeight = lastHeightDown.current + diff;
+    const minHeight = 64; // 4rem
+    const maxHeight = window.innerHeight * 0.4; // 40vh
+    newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+    contentTextareaRef.current.style.height = `${newHeight}px`;
+  }
+
+  function handleResizeDownMouseUp() {
+    if (!mouseMovedDown.current) {
+      // Click: increase height
+      const textarea = contentTextareaRef.current;
+      if (textarea) {
         const maxHeight = window.innerHeight * 0.4;
+        const currentHeight = textarea.offsetHeight;
         textarea.style.height = Math.min(currentHeight + 40, maxHeight) + 'px';
       }
     }
-    isResizing.current = false;
-    document.removeEventListener('mousemove', handleResizeMouseMove);
-    document.removeEventListener('mouseup', handleResizeMouseUp);
+    isResizingDown.current = false;
+    document.removeEventListener('mousemove', handleResizeDownMouseMove);
+    document.removeEventListener('mouseup', handleResizeDownMouseUp);
   }
 
   // const [todos, setTodos] = useState(() => { // Main todos array (with completed property)
@@ -121,17 +166,17 @@ function App() {
     localStorage.setItem('todos', JSON.stringify(todos)); // Persist todos to localStorage on change
   }, [todos]);
 
-  useEffect(() => {
-    if (isVisible) {
-      document.body.style.overflow = 'auto'; // Enable scrolling
-    } else {
-      document.body.style.overflow = 'hidden'; // Disable scrolling
-    }
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isVisible]);
+  // useEffect(() => {
+  //   if (isVisible) {
+  //     document.body.style.overflow = 'auto'; // Enable scrolling
+  //   } else {
+  //     document.body.style.overflow = 'hidden'; // Disable scrolling
+  //   }
+  //   // Cleanup on unmount
+  //   return () => {
+  //     document.body.style.overflow = '';
+  //   };
+  // }, [isVisible]);
 
   useEffect(() => {
     return () => {
@@ -362,7 +407,7 @@ function App() {
               </button>
             </div>
 
-            <button onClick={handleToggle} className="mode border-none bg-[#6C63FF] pr-[10px] pl-[10px] rounded-[7px] cursor-pointer">
+            <button onClick={handleToggle} className="mode border-none bg-[#6C63FF] pr-[10px] pl-[10px] rounded-[7px] cursor-pointer hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF]">
               {isDark ? (
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12.1576 1.15764C12.1576 0.518299 11.6394 0 11 0C10.3606 0 9.84235 0.518299 9.84235 1.15764V1.73887C9.84235 2.37822 10.3606 2.89651 11 2.89651C11.6394 2.89651 12.1576 2.37822 12.1576 1.73887V1.15764ZM18.7782 4.85893C19.2302 4.40683 19.2302 3.67386 18.7782 3.22177C18.3261 2.76969 17.5931 2.76969 17.141 3.22177L16.73 3.63282C16.2779 4.08492 16.2779 4.81789 16.73 5.26998C17.182 5.72206 17.915 5.72206 18.3671 5.26998L18.7782 4.85893ZM4.85889 3.22184C4.40681 2.76976 3.67383 2.76976 3.22175 3.22184C2.76967 3.67393 2.76967 4.4069 3.22175 4.859L3.63273 5.26998C4.08483 5.72206 4.8178 5.72206 5.26989 5.26998C5.72197 4.81789 5.72197 4.08492 5.26989 3.63282L4.85889 3.22184ZM1.15764 9.84235C0.518299 9.84235 0 10.3606 0 11C0 11.6394 0.518299 12.1576 1.15764 12.1576H1.73884C2.37819 12.1576 2.89648 11.6394 2.89648 11C2.89648 10.3606 2.37819 9.84235 1.73884 9.84235H1.15764ZM20.2611 9.84235C19.6217 9.84235 19.1035 10.3606 19.1035 11C19.1035 11.6394 19.6217 12.1576 20.2611 12.1576H20.8424C21.4817 12.1576 22 11.6394 22 11C22 10.3606 21.4817 9.84235 20.8424 9.84235H20.2611ZM5.26989 18.3672C5.72197 17.9151 5.72197 17.1821 5.26989 16.7301C4.8178 16.2779 4.08483 16.2779 3.63273 16.7301L3.22177 17.141C2.76968 17.5931 2.76968 18.3261 3.22176 18.7782C3.67385 19.2302 4.40682 19.2302 4.85892 18.7782L5.26989 18.3672ZM18.3671 16.7301C17.915 16.2779 17.182 16.2779 16.73 16.7301C16.2779 17.1821 16.2779 17.9151 16.73 18.3672L17.1409 18.7782C17.5931 19.2303 18.326 19.2303 18.7782 18.7782C19.2302 18.3261 19.2302 17.5932 18.7782 17.141L18.3671 16.7301ZM12.1576 20.2611C12.1576 19.6217 11.6394 19.1035 11 19.1035C10.3606 19.1035 9.84235 19.6217 9.84235 20.2611V20.8424C9.84235 21.4817 10.3606 22 11 22C11.6394 22 12.1576 21.4817 12.1576 20.8424V20.2611ZM6.36943 11C6.36943 8.4426 8.4426 6.36943 11 6.36943C13.5573 6.36943 15.6305 8.4426 15.6305 11C15.6305 13.5573 13.5573 15.6305 11 15.6305C8.4426 15.6305 6.36943 13.5573 6.36943 11ZM11 4.05415C7.1639 4.05415 4.05415 7.1639 4.05415 11C4.05415 14.8361 7.1639 17.9458 11 17.9458C14.8361 17.9458 17.9458 14.8361 17.9458 11C17.9458 7.1639 14.8361 4.05415 11 4.05415Z" fill="#F7F7F7"></path>
@@ -374,12 +419,15 @@ function App() {
               )}
             </button>
           </div>
-          <button onClick={handleShowModal} className={`cursor-pointer addTodo relative md:absolute md:bottom-[30px] md:right-0 bg-[#6C63FF] md:p-3 rounded-[50%] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF]`} style={{ minHeight: window.innerWidth < 768 ? `${buttonHeight}px` : 'auto' }}>
+          <button className={`cursor-pointer addTodo relative bg-[#6C63FF] rounded-[10px] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] w-full text-white`} style={{ minHeight: `${buttonHeight}px` }}>
+            <span className='w-[24px] h-[24px] flex justify-center items-center'>Hey</span>
+          </button>
+          <button onClick={handleShowModal} className={`cursor-pointer z-[100] addTodo relative md:absolute md:bottom-[30px] md:right-[10px] bg-[#6C63FF] md:p-3 rounded-[50%] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF]`} style={{ minHeight: window.innerWidth < 768 ? `${buttonHeight}px` : 'auto' }}>
             <svg width="24px" height="24px" viewBox="-1.4 -1.4 22.80 22.80" xmlns="http://www.w3.org/2000/svg" fill="white" stroke="white" stroke-width="1.42"><g id="SVGRepo_bgCarrier" stroke-whiteidth="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="" stroke-whiteidth="0.24"></g><g id="SVGRepo_iconCarrier"> <path fill="white" d="M10,-1.77635684e-15 C10.4232029,-1.69861573e-15 10.7662767,0.343073746 10.7662767,0.766276659 L10.766,9.233 L19.2337233,9.23372334 C19.6569263,9.23372334 20,9.57679709 20,10 C20,10.4232029 19.6569263,10.7662767 19.2337233,10.7662767 L10.766,10.766 L10.7662767,19.2337233 C10.7662767,19.6569263 10.4232029,20 10,20 C9.57679709,20 9.23372334,19.6569263 9.23372334,19.2337233 L9.233,10.766 L0.766276659,10.7662767 C0.343073746,10.7662767 0,10.4232029 0,10 C0,9.57679709 0.343073746,9.23372334 0.766276659,9.23372334 L9.233,9.233 L9.23372334,0.766276659 C9.23372334,0.343073746 9.57679709,-1.85409795e-15 10,-1.77635684e-15 Z"></path> </g></svg>
           </button>
         </div>
-        <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm  h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-          <div className={`modalBox ${isVisible ? 'visible' : ''} flex flex-col justify-center items-center gap-3 px-5 py-5 rounded-2xl w-full ${isDark ? 'border-[#6C63FF]' : 'border-white'}`}>
+        <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className={`modalBox ${isVisible ? 'visible' : ''} flex flex-col max-h-screen justify-center items-center gap-3 px-5 py-5 rounded-2xl w-full ${isDark ? 'border-[#6C63FF]' : 'border-white'}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
               console.log(inputValue)
@@ -387,11 +435,11 @@ function App() {
             }} className="w-[80%] sm:w-[50%]">
 
               <fieldset className={`relative border-[2px] rounded-2xl px-6 pt-8 pb-6 ${isDark ? 'border-[#6C63FF]' : 'border-white'}`}>
-                <legend className={`absolute -top-4 left-5 rounded-[20px] px-2 text-lg font-semibold ${isDark ? 'bg-black text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>
+                <legend className={`absolute -top-4 left-5 rounded-[20px] px-2 text-lg font-semibold ${isDark ? 'bg-white text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>
                   {isEditing ? 'Edit Todo' : 'New Todo'}
                 </legend>
 
-                <label htmlFor="todoTitle" className={`block mb-2 ${isDark ? 'text-[#6C63FF]' : 'text-white'}`}>Title</label>
+                <label htmlFor="todoTitle" className={`block mb-2 w-fit px-2 rounded-[7px] ${isDark ? 'bg-white text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>Title</label>
                 <textarea
                   id="todoTitle"
                   ref={inputRef}
@@ -402,18 +450,19 @@ function App() {
                   spellCheck={false}
                   value={todoTitle}
                   onChange={(e) => setTodoTitle(e.target.value)}
-                  className={`p-2 w-full rounded-[10px] border-[2px] scrollbar-custom ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'}`}
+                  className={`p-2 w-full rounded-[10px] border-[2px] scrollbar-custom ${isDark ? 'border-[#867fff] bg-transparent text-white placeholder-white' : 'border-black caret-white'}`}
                   style={{
                     WebkitTextFillColor: isDark ? 'white' : 'white',
+                    maxHeight: '4.5rem',
                   }}
                   placeholder="Todo title..."
                 />
 
-                <label htmlFor="todoContentInput" className={`block mb-2 mt-5 ${isDark ? 'text-[#6C63FF]' : 'text-white'}`}>Todo</label>
+                <label htmlFor="todoContentInput" className={`block mb-2 mt-5 w-fit px-2 rounded-[7px] ${isDark ? 'bg-white text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>Todo</label>
                 <div className="relative w-full">
                   <textarea
                     id="todoContentInput"
-                    ref={textareaRef}
+                    ref={contentTextareaRef}
                     type="text"
                     value={todoContent}
                     autoComplete="off"
@@ -424,21 +473,36 @@ function App() {
                     style={{
                       WebkitTextFillColor: isDark ? 'white' : 'white',
                       maxHeight: '40vh',
-                      minHeight: '4rem',
+                      minHeight: '10rem',
                     }}
                     placeholder="Todo details..."
                   />
                   {/* Custom resize icon */}
+                  {/* Bottom left: UP arrow (decrease/drag) */}
                   <div
-                    onMouseDown={handleResizeMouseDown}
-                    className="absolute bottom-3 right-2 w-5 h-5 cursor-se-resize flex items-end justify-end z-10"
+                    onMouseDown={handleResizeUpMouseDown}
+                    className="absolute bottom-3 left-2 w-6 h-6 cursor-n-resize flex items-end justify-end z-10"
                     style={{ userSelect: 'none' }}
-                    title="Resize"
+                    title="Decrease or drag to resize"
                   >
-                    {/* Square with down arrow */}
-                    <svg width="18" height="18" viewBox="0 0 18 18" className="text-gray-400 pointer-events-none">
-                      <rect x="2" y="2" width="14" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
-                      <path d="M6 9l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <svg width="22" height="22" viewBox="0 0 22 22" className="text-gray-400 pointer-events-none">
+                      <rect x="2" y="2" width="18" height="18" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
+                      {/* Up arrow only */}
+                      <path d="M7 13l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+
+                  {/* Bottom right: DOWN arrow (increase/drag) */}
+                  <div
+                    onMouseDown={handleResizeDownMouseDown}
+                    className="absolute bottom-3 right-2 w-6 h-6 cursor-s-resize flex items-end justify-end z-10"
+                    style={{ userSelect: 'none' }}
+                    title="Increase or drag to resize"
+                  >
+                    <svg width="22" height="22" viewBox="0 0 22 22" className="text-gray-400 pointer-events-none">
+                      <rect x="2" y="2" width="18" height="18" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
+                      {/* Down arrow only */}
+                      <path d="M7 9l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                 </div>
@@ -463,7 +527,7 @@ function App() {
             </form>
           </div>
         </div>
-        {filteredTodos.length > 0 ? (<div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 pb-[15px] px-[15px] gap-1 max-h-[56%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
+        {filteredTodos.length > 0 ? (<div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 pb-[15px] px-[15px] gap-1 max-h-[50%] md:max-h-[80%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
         ${isDark ? 'before:bg-[#343434]' : 'before:bg-[#F7F7F7]'}
         before:h-[1px]
         before:left-0
