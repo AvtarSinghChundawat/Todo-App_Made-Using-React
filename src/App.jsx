@@ -355,7 +355,7 @@ function App() {
   // ======= RENDER =======
 
   return (
-    <div className={`wrapper w-screen flex justify-center h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#F7F7F7] text-black'}`}>
+    <div className={`wrapper w-screen flex justify-center h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'}`}>
       <div className="main flex flex-col items-center relative w-[80%] sm:w-[70%]">
         <header className='flex w-screen justify-center items-center p-5 text-[2em]'>TODO APP</header>
         <div className="search w-full flex gap-4">
@@ -393,8 +393,8 @@ function App() {
                   </svg>
                 </span>
                 {isOpen && (
-                  <div className={`absolute top-full left-0 mt-1 w-full ${isDark ? 'bg-[#333] text-white' : 'bg-white text-black'} rounded-[15px] shadow-lg border border-[#6C63FF] z-10`}>
-                    <ul className="divide-y divide-gray-200 overflow-hidden">
+                  <div className={`absolute top-full left-0 mt-1 w-full ${isDark ? 'bg-[#333] text-white' : 'bg-[#FEF6C3] text-black'} rounded-[15px] shadow-lg border border-[#6C63FF] z-10`}>
+                    <ul className={`divide-y ${isDark ? 'divide-gray-200' : 'divide-[black]'} overflow-hidden`}>
                       {options.map((option, index) => (
                         <li
                           key={index}
@@ -432,20 +432,20 @@ function App() {
             <svg width="24px" height="24px" viewBox="-1.4 -1.4 22.80 22.80" xmlns="http://www.w3.org/2000/svg" fill="white" stroke="white" stroke-width="1.42"><g id="SVGRepo_bgCarrier" stroke-whiteidth="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="" stroke-whiteidth="0.24"></g><g id="SVGRepo_iconCarrier"> <path fill="white" d="M10,-1.77635684e-15 C10.4232029,-1.69861573e-15 10.7662767,0.343073746 10.7662767,0.766276659 L10.766,9.233 L19.2337233,9.23372334 C19.6569263,9.23372334 20,9.57679709 20,10 C20,10.4232029 19.6569263,10.7662767 19.2337233,10.7662767 L10.766,10.766 L10.7662767,19.2337233 C10.7662767,19.6569263 10.4232029,20 10,20 C9.57679709,20 9.23372334,19.6569263 9.23372334,19.2337233 L9.233,10.766 L0.766276659,10.7662767 C0.343073746,10.7662767 0,10.4232029 0,10 C0,9.57679709 0.343073746,9.23372334 0.766276659,9.23372334 L9.233,9.233 L9.23372334,0.766276659 C9.23372334,0.343073746 9.57679709,-1.85409795e-15 10,-1.77635684e-15 Z"></path> </g></svg>
           </button>
         </div>
-        <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-          <div className={`modalBox ${isVisible ? 'visible' : ''} flex flex-col max-h-screen justify-center items-center gap-3 px-5 py-5 rounded-2xl w-full ${isDark ? 'border-[#6C63FF]' : 'border-white'}`}>
+        <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm min-h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className={`modalBox ${isVisible ? 'visible' : ''} flex flex-col h-screen sm:h-auto max-h-screen items-center gap-3 px-5 py-5 rounded-2xl w-full ${isDark ? 'border-[#6C63FF]' : 'border-[#FEF6C3]'}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
               console.log(inputValue)
               handleAddTodo();
-            }} className="w-[80%] sm:w-[50%]">
+            }} className="w-[100%] sm:w-[70%]">
 
-              <fieldset className={`relative border-[2px] rounded-2xl px-6 pt-8 pb-6 ${isDark ? 'border-[#6C63FF]' : 'border-white'}`}>
-                <legend className={`absolute -top-4 left-5 rounded-[20px] px-2 text-lg font-semibold ${isDark ? 'bg-white text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>
+              <fieldset className={`relative border-[2px] rounded-2xl px-6 pt-8 pb-6 ${isDark ? 'border-[#6C63FF]' : 'border-[#FEF6C3]'}`}>
+                <legend className={`absolute -top-4 left-5 rounded-[20px] px-2 text-lg font-semibold ${isDark ? 'bg-[#FEF6C3] text-[#6C63FF]' : 'bg-[#8a84fc] text-[#FEF6C3]'}`}>
                   {isEditing ? 'Edit Todo' : 'New Todo'}
                 </legend>
 
-                <label htmlFor="todoTitle" className={`block mb-2 w-fit px-2 rounded-[7px] ${isDark ? 'bg-white text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>Title</label>
+                <label htmlFor="todoTitle" className={`block mb-2 w-fit px-2 rounded-[7px] ${isDark ? 'bg-[#FEF6C3] text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>Title</label>
                 <textarea
                   id="todoTitle"
                   ref={inputRef}
@@ -456,15 +456,14 @@ function App() {
                   spellCheck={false}
                   value={todoTitle}
                   onChange={(e) => setTodoTitle(e.target.value)}
-                  className={`p-2 w-full rounded-[10px] border-[2px] scrollbar-custom ${isDark ? 'border-[#867fff] bg-transparent text-white placeholder-white' : 'border-black caret-white'}`}
+                  className={`p-2 w-full rounded-[10px] border-[2px] scrollbar-custom ${isDark ? 'border-[#867fff] bg-transparent text-white placeholder-white' : 'border-black caret-white'} h-[6rem] sm:h-auto sm:max-h-[4.5rem]`}
                   style={{
                     WebkitTextFillColor: isDark ? 'white' : 'white',
-                    maxHeight: '4.5rem',
                   }}
                   placeholder="Todo title..."
                 />
 
-                <label htmlFor="todoContentInput" className={`block mb-2 mt-5 w-fit px-2 rounded-[7px] ${isDark ? 'bg-white text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>Todo</label>
+                <label htmlFor="todoContentInput" className={`block mb-2 mt-5 w-fit px-2 rounded-[7px] ${isDark ? 'bg-[#FEF6C3] text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>Todo</label>
                 <div className="relative w-full">
                   <textarea
                     id="todoContentInput"
@@ -475,11 +474,9 @@ function App() {
                     autoCorrect="off"
                     spellCheck={false}
                     onChange={(e) => setTodoContent(e.target.value)}
-                    className={`p-2 w-full rounded-[10px] border-[2px] ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'} resize-none scrollbar-custom`}
+                    className={`p-2 w-full rounded-[10px] border-[2px] ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'} resize-none scrollbar-custom h-[30vh] max-h-[40vh] sm:h-[40vh] sm:max-h-[40vh]`}
                     style={{
                       WebkitTextFillColor: isDark ? 'white' : 'white',
-                      maxHeight: '40vh',
-                      minHeight: '10rem',
                     }}
                     placeholder="Todo details..."
                   />
@@ -533,9 +530,9 @@ function App() {
             </form>
           </div>
         </div>
-        {filteredTodos.length > 0 ? (<div className={`todoContainer rounded-[20px] flex flex-col scrollbar-custom items-center my-5 px-[15px] gap-1 max-h-[50%] md:max-h-[80%] border-1 border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
-        ${isDark ? 'before:bg-[#343434]' : 'before:bg-[#F7F7F7]'}
-        before:h-[1px]
+        {filteredTodos.length > 0 ? (<div className={`todoContainer flex flex-col scrollbar-custom items-center my-5 px-[15px] gap-1 border-2 ${minimal ? 'max-h-[61%]' : 'max-h-[54%]'} md:max-h-[80%] ${minimal ? 'rounded-[15px]' : 'rounded-[20px]'} border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
+        ${isDark ? 'before:bg-[#343434]' : 'before:bg-[#FEF6C3]'}
+        before:h-[3px]
         before:left-0
         before:pointer-events-none
         before:absolute
@@ -563,7 +560,7 @@ function App() {
           ) : (''
           )}
         </div>) : (
-          <div className={`flex flex-col items-center justify-start px-5 py-10 h-[50vh] w-full ${isDark ? 'bg-[#343434]' : 'bg-[#F7F7F7]'}`}>
+          <div className={`flex flex-col items-center justify-start px-5 py-10 h-[50vh] w-full ${isDark ? 'bg-[#343434]' : 'bg-[#FEF6C3]'}`}>
             <h2 className={`text-center text-[1.5rem] ${isDark ? 'text-white' : 'text-black'}`}>No Todos Found , Add some ☺️</h2>
           </div>
         )}

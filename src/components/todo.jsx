@@ -22,7 +22,7 @@ export const Todo = (props) => {
     // };
 
     return (
-        <div className={`w-[100%] rounded-[0px] shrink-0 border-t ${props.isDark ? 'border-white' : 'border-black'} ${props.minimal ? 'pt-[11px]' : 'pt-[15px]'} py-2 ${props.minimal ? 'px-0' : 'px-2'} flex justify-between items-start`}>
+        <div className={`w-[100%] rounded-[0px] shrink-0 border-t-2 rounded-[3px] ${props.isDark ? 'border-[#6C63FF]' : 'border-[#0d00ff]'} ${props.minimal ? 'pt-[11px]' : 'pt-[15px]'} py-2 ${props.minimal ? 'px-0' : 'px-2'} flex justify-between items-start`}>
             <div className={`flex gap-3 ${props.minimal ? 'w-full' : 'w-[76%]'}`}>
                 {/* Checkbox: controls completed status via parent */}
                 <label htmlFor={`checkbox-${props.id}`} className={`relative flex cursor-pointer group ${props.minimal ? 'hidden' : 'false'}`}>
@@ -49,9 +49,9 @@ export const Todo = (props) => {
                     </span>
                 </label>
 
-                <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-1'>
                     {/* Display title, strikethrough if completed */}
-                    <div className={`text-[1.2rem] break-words whitespace-normal w-full ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`} style={{ lineHeight: '0.8' }}
+                    <div className={`text-[1.2rem] break-words whitespace-normal relative top-[-2.7px] w-full ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`} style={{ lineHeight: 'normal' , whiteSpace: 'pre-line' }}
                     >
                         {props.title}
                     </div>
