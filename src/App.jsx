@@ -170,6 +170,14 @@ function App() {
     localStorage.setItem('todos', JSON.stringify(todos)); // Persist todos to localStorage on change
   }, [todos]);
 
+  useEffect(() => {
+    if (isDark){
+      document.body.style.backgroundColor = '#343434'; // Dark mode background
+    } else {
+      document.body.style.backgroundColor = '#FEF6C3'; // Light mode background
+    }
+  },[isDark]);
+
   // useEffect(() => {
   //   if (isVisible) {
   //     document.body.style.overflow = 'auto'; // Enable scrolling
