@@ -26,7 +26,11 @@ function App() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [currentTodoId, setCurrentTodoId] = useState(null);
+  const [minimal, setMinimal] = useState(false); // Minimal mode
 
+  useEffect(() => {
+    console.log(`minimal mode: ${minimal}`);
+  }, [minimal])
   const contentTextareaRef = useRef(null);
   const isResizingUp = useRef(false);
   const lastMouseYUp = useRef(0);
@@ -419,8 +423,10 @@ function App() {
               )}
             </button>
           </div>
-          <button className={`cursor-pointer addTodo relative bg-[#6C63FF] rounded-[10px] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] w-full text-white`} style={{ minHeight: `${buttonHeight}px` }}>
-            <span className='w-[24px] h-[24px] flex justify-center items-center'>Hey</span>
+          <button onClick={() => {
+            setMinimal(!minimal)
+          }} className={`cursor-pointer addTodo relative bg-[#6C63FF] rounded-[10px] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] w-full text-white`} style={{ minHeight: `${buttonHeight}px` }}>
+            <span className='h-[24px] flex justify-center items-center'>{`${minimal ? 'Normal View' : 'Seamless View'}`}</span>
           </button>
           <button onClick={handleShowModal} className={`cursor-pointer z-[100] addTodo relative md:absolute md:bottom-[30px] md:right-[10px] bg-[#6C63FF] md:p-3 rounded-[50%] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF]`} style={{ minHeight: window.innerWidth < 768 ? `${buttonHeight}px` : 'auto' }}>
             <svg width="24px" height="24px" viewBox="-1.4 -1.4 22.80 22.80" xmlns="http://www.w3.org/2000/svg" fill="white" stroke="white" stroke-width="1.42"><g id="SVGRepo_bgCarrier" stroke-whiteidth="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="" stroke-whiteidth="0.24"></g><g id="SVGRepo_iconCarrier"> <path fill="white" d="M10,-1.77635684e-15 C10.4232029,-1.69861573e-15 10.7662767,0.343073746 10.7662767,0.766276659 L10.766,9.233 L19.2337233,9.23372334 C19.6569263,9.23372334 20,9.57679709 20,10 C20,10.4232029 19.6569263,10.7662767 19.2337233,10.7662767 L10.766,10.766 L10.7662767,19.2337233 C10.7662767,19.6569263 10.4232029,20 10,20 C9.57679709,20 9.23372334,19.6569263 9.23372334,19.2337233 L9.233,10.766 L0.766276659,10.7662767 C0.343073746,10.7662767 0,10.4232029 0,10 C0,9.57679709 0.343073746,9.23372334 0.766276659,9.23372334 L9.233,9.233 L9.23372334,0.766276659 C9.23372334,0.343073746 9.57679709,-1.85409795e-15 10,-1.77635684e-15 Z"></path> </g></svg>
@@ -551,6 +557,7 @@ function App() {
                 completed={todo.completed}
                 onToggleCompleted={handleToggleCompleted}
                 onDelete={handleDeleteTodo}
+                minimal={minimal}
               />
             ))
           ) : (''

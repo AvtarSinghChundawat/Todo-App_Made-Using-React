@@ -23,9 +23,9 @@ export const Todo = (props) => {
 
     return (
         <div className={`w-[100%] rounded-[0px] shrink-0 border-t ${props.isDark ? 'border-white' : 'border-black'} pt-[15px] p-2 flex justify-between items-center`}>
-            <div className="flex gap-3 items-center w-[76%]">
+            <div className={`flex gap-3 items-center ${props.minimal ? 'w-full' : 'w-[76%]'}`}>
                 {/* Checkbox: controls completed status via parent */}
-                <label htmlFor={`checkbox-${props.id}`} className="relative flex items-center cursor-pointer group">
+                <label htmlFor={`checkbox-${props.id}`} className={`relative flex items-center cursor-pointer group ${props.minimal ? 'hidden' : 'false'}`}>
                     {/* Visually hidden native checkbox */}
                     <input
                         type="checkbox"
@@ -63,7 +63,7 @@ export const Todo = (props) => {
                     )}
                 </div>
             </div>
-            <div className='flex gap-3 items-center'>
+            <div className={`flex gap-3 items-center ${props.minimal ? 'hidden' : 'false'}`}>
                 {/* Edit/save icon */}
                 <div className='group hover:cursor-pointer' onClick={() => props.onEdit(props.id, props.title, props.content)}>
                     <svg className={`${props.isDark ? 'stroke-white' : 'stroke-black'} group-hover:stroke-green-400`}
