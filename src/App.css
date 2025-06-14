@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Evo';
+  src: url('./assets/Evo.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
     box-sizing: border-box;
     line-height: normal;
@@ -7,7 +14,8 @@
 body {
     background-color: #343434;
     box-sizing: border-box;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    /* font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
+    font-family: 'Evo', sans-serif;
     overflow: hidden;
 }
 
@@ -156,7 +164,6 @@ body {
     .addTodo {
         width: 100%;
         border-radius: 7px;
-        display: flex;
         justify-content: center;
         align-items: center;
         z-index: 100;
