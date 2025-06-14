@@ -51,7 +51,7 @@ export const Todo = (props) => {
 
                 <div className='flex flex-col gap-1'>
                     {/* Display title, strikethrough if completed */}
-                    <div className={`text-[1.2rem] break-words whitespace-normal relative top-[-2.7px] w-full ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`} style={{ lineHeight: 'normal' , whiteSpace: 'pre-line' }}
+                    <div className={`text-[1.3rem] break-words whitespace-normal relative top-[-2.7px] w-full ${props.completed ? `line-through ${props.isDark ? 'text-gray-200' : 'text-gray-500'}` : `${props.isDark ? 'text-blue-300' : 'text-blue-700'}`}`} style={{ lineHeight: 'normal' , whiteSpace: 'pre-line' }}
                     >
                         {props.title}
                     </div>
