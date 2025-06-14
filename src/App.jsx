@@ -24,6 +24,51 @@ function App() {
     const savedMode = localStorage.getItem('theme');
     return savedMode ? savedMode === 'dark' : true;
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentTodoId, setCurrentTodoId] = useState(null);
+
+  const textareaRef = useRef(null);
+  const isResizing = useRef(false);
+  const lastMouseY = useRef(0);
+  const lastHeight = useRef(0);
+  const mouseMoved = useRef(false);
+
+  function handleResizeMouseDown(e) {
+    e.preventDefault();
+    isResizing.current = true;
+    mouseMoved.current = false;
+    lastMouseY.current = e.clientY;
+    lastHeight.current = textareaRef.current.offsetHeight;
+
+    document.addEventListener('mousemove', handleResizeMouseMove);
+    document.addEventListener('mouseup', handleResizeMouseUp);
+  }
+
+  function handleResizeMouseMove(e) {
+    mouseMoved.current = true;
+    if (!isResizing.current) return;
+    const diff = e.clientY - lastMouseY.current;
+    let newHeight = lastHeight.current + diff;
+    const minHeight = 64; // 4rem
+    const maxHeight = window.innerHeight * 0.4; // 40vh, adjust as needed
+    newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+    textareaRef.current.style.height = `${newHeight}px`;
+  }
+
+  function handleResizeMouseUp() {
+    if (!mouseMoved.current) {
+      // This was a click, not a drag
+      const textarea = textareaRef.current;
+      if (textarea) {
+        const currentHeight = textarea.offsetHeight;
+        const maxHeight = window.innerHeight * 0.4;
+        textarea.style.height = Math.min(currentHeight + 40, maxHeight) + 'px';
+      }
+    }
+    isResizing.current = false;
+    document.removeEventListener('mousemove', handleResizeMouseMove);
+    document.removeEventListener('mouseup', handleResizeMouseUp);
+  }
 
   // const [todos, setTodos] = useState(() => { // Main todos array (with completed property)
   //   const stored = localStorage.getItem('todos');
@@ -77,6 +122,18 @@ function App() {
   }, [todos]);
 
   useEffect(() => {
+    if (isVisible) {
+      document.body.style.overflow = 'auto'; // Enable scrolling
+    } else {
+      document.body.style.overflow = 'hidden'; // Disable scrolling
+    }
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
     return () => {
       if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current); // Cleanup undo timeout on unmount
     };
@@ -118,11 +175,14 @@ function App() {
   // ======= HANDLERS/FUNCTIONS =======
 
   const handleShowModal = () => setIsVisible(true); // Show modal
-  const handleHideModal = () => { // Hide modal and clear content input
+  const handleHideModal = () => {
     setIsVisible(false);
-    setTodoTitle('');      // Clear the title input
-    setTodoContent('');    // Clear the content input
+    setIsEditing(false);
+    setCurrentTodoId(null);
+    setTodoTitle('');
+    setTodoContent('');
   };
+
 
   const options = ['ALL', 'COMPLETE', 'INCOMPLETE']; // Dropdown options
 
@@ -137,16 +197,38 @@ function App() {
     setIsOpen(false);
   };
 
-  const handleAddTodo = () => { // Add new todo
+  const handleAddTodo = () => {
     if (todoTitle.trim()) {
-      setTodos([
-        ...todos,
-        { id: Date.now(), title: todoTitle, content: todoContent, completed: false }
-      ]);
+      if (isEditing) {
+        // Update existing todo
+        setTodos(todos.map(todo =>
+          todo.id === currentTodoId
+            ? { ...todo, title: todoTitle, content: todoContent }
+            : todo
+        ));
+        setIsEditing(false);
+        setCurrentTodoId(null);
+      } else {
+        // Create new todo
+        setTodos([...todos, {
+          id: Date.now(),
+          title: todoTitle,
+          content: todoContent,
+          completed: false
+        }]);
+      }
       setTodoTitle('');
       setTodoContent('');
       setIsVisible(false);
     }
+  };
+
+  const handleEditClick = (id, title, content) => {
+    setTodoTitle(title);
+    setTodoContent(content);
+    setCurrentTodoId(id);
+    setIsEditing(true);
+    setIsVisible(true);
   };
 
   const handleDeleteTodo = (id) => {
@@ -216,7 +298,6 @@ function App() {
       (todo.content && todo.content.toLowerCase().includes(search))
     );
   });
-
 
   // ======= RENDER =======
   // ======= RENDER =======
@@ -297,7 +378,7 @@ function App() {
             <svg width="24px" height="24px" viewBox="-1.4 -1.4 22.80 22.80" xmlns="http://www.w3.org/2000/svg" fill="white" stroke="white" stroke-width="1.42"><g id="SVGRepo_bgCarrier" stroke-whiteidth="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="" stroke-whiteidth="0.24"></g><g id="SVGRepo_iconCarrier"> <path fill="white" d="M10,-1.77635684e-15 C10.4232029,-1.69861573e-15 10.7662767,0.343073746 10.7662767,0.766276659 L10.766,9.233 L19.2337233,9.23372334 C19.6569263,9.23372334 20,9.57679709 20,10 C20,10.4232029 19.6569263,10.7662767 19.2337233,10.7662767 L10.766,10.766 L10.7662767,19.2337233 C10.7662767,19.6569263 10.4232029,20 10,20 C9.57679709,20 9.23372334,19.6569263 9.23372334,19.2337233 L9.233,10.766 L0.766276659,10.7662767 C0.343073746,10.7662767 0,10.4232029 0,10 C0,9.57679709 0.343073746,9.23372334 0.766276659,9.23372334 L9.233,9.233 L9.23372334,0.766276659 C9.23372334,0.343073746 9.57679709,-1.85409795e-15 10,-1.77635684e-15 Z"></path> </g></svg>
           </button>
         </div>
-        <div className={`actualTodoWritingForm todoContent flex flex-col pt-20 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm  h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm  h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
           <div className={`modalBox ${isVisible ? 'visible' : ''} flex flex-col justify-center items-center gap-3 px-5 py-5 rounded-2xl w-full ${isDark ? 'border-[#6C63FF]' : 'border-white'}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
@@ -307,11 +388,11 @@ function App() {
 
               <fieldset className={`relative border-[2px] rounded-2xl px-6 pt-8 pb-6 ${isDark ? 'border-[#6C63FF]' : 'border-white'}`}>
                 <legend className={`absolute -top-4 left-5 rounded-[20px] px-2 text-lg font-semibold ${isDark ? 'bg-black text-[#6C63FF]' : 'bg-[#8a84fc] text-white'}`}>
-                  New Todo
+                  {isEditing ? 'Edit Todo' : 'New Todo'}
                 </legend>
 
                 <label htmlFor="todoTitle" className={`block mb-2 ${isDark ? 'text-[#6C63FF]' : 'text-white'}`}>Title</label>
-                <input
+                <textarea
                   id="todoTitle"
                   ref={inputRef}
                   type="text"
@@ -321,7 +402,7 @@ function App() {
                   spellCheck={false}
                   value={todoTitle}
                   onChange={(e) => setTodoTitle(e.target.value)}
-                  className={`p-2 w-full rounded-[10px] border-[2px] ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'}`}
+                  className={`p-2 w-full rounded-[10px] border-[2px] scrollbar-custom ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'}`}
                   style={{
                     WebkitTextFillColor: isDark ? 'white' : 'white',
                   }}
@@ -329,20 +410,38 @@ function App() {
                 />
 
                 <label htmlFor="todoContentInput" className={`block mb-2 mt-5 ${isDark ? 'text-[#6C63FF]' : 'text-white'}`}>Todo</label>
-                <input
-                  id="todoContentInput"
-                  type="text"
-                  value={todoContent}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  onChange={(e) => setTodoContent(e.target.value)}
-                  className={`p-2 w-full rounded-[10px] border-[2px] ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'}`}
-                  style={{
-                    WebkitTextFillColor: isDark ? 'white' : 'white',
-                  }}
-                  placeholder="Todo details..."
-                />
+                <div className="relative w-full">
+                  <textarea
+                    id="todoContentInput"
+                    ref={textareaRef}
+                    type="text"
+                    value={todoContent}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    onChange={(e) => setTodoContent(e.target.value)}
+                    className={`p-2 w-full rounded-[10px] border-[2px] ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'} resize-none scrollbar-custom`}
+                    style={{
+                      WebkitTextFillColor: isDark ? 'white' : 'white',
+                      maxHeight: '40vh',
+                      minHeight: '4rem',
+                    }}
+                    placeholder="Todo details..."
+                  />
+                  {/* Custom resize icon */}
+                  <div
+                    onMouseDown={handleResizeMouseDown}
+                    className="absolute bottom-3 right-2 w-5 h-5 cursor-se-resize flex items-end justify-end z-10"
+                    style={{ userSelect: 'none' }}
+                    title="Resize"
+                  >
+                    {/* Square with down arrow */}
+                    <svg width="18" height="18" viewBox="0 0 18 18" className="text-gray-400 pointer-events-none">
+                      <rect x="2" y="2" width="14" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+                      <path d="M6 9l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
 
                 <div className="flex justify-between gap-4 mt-6">
                   <button
@@ -354,10 +453,11 @@ function App() {
                   </button>
                   <button
                     type="submit"
-                    className="w-full py-2 bg-[#6C63FF] hover:bg-[#bbb8f1] hover:text-black rounded-[10px] text-white cursor-pointer"
+                    className={`w-full py-2 bg-[#6C63FF] hover:bg-[#bbb8f1] hover:text-black rounded-[10px] text-white cursor-pointer`}
                   >
-                    Save
+                    {isEditing ? 'Save Changes' : 'Add Todo'}
                   </button>
+
                 </div>
               </fieldset>
             </form>
@@ -381,17 +481,17 @@ function App() {
                 key={todo.id}
                 id={todo.id}
                 isDark={isDark}
+                onEdit={handleEditClick}
                 title={todo.title}
                 content={todo.content}
                 completed={todo.completed}
                 onToggleCompleted={handleToggleCompleted}
                 onDelete={handleDeleteTodo}
-                onEdit={handleEditTodo}
               />
             ))
           ) : (''
           )}
-        </div>):(
+        </div>) : (
           <div className={`flex flex-col items-center justify-start px-5 py-10 h-[50vh] w-full ${isDark ? 'bg-[#343434]' : 'bg-[#F7F7F7]'}`}>
             <h2 className={`text-center text-[1.5rem] ${isDark ? 'text-white' : 'text-black'}`}>No Todos Found , Add some ☺️</h2>
           </div>

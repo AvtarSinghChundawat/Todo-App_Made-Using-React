@@ -11,6 +11,11 @@ body {
     overflow: hidden;
 }
 
+/* In your CSS file */
+.content {
+  line-height: 1.5;
+}
+
 /* In your CSS file (e.g., App.css) */
 .scrollbar-custom {
     scrollbar-width: none;
