@@ -56,7 +56,7 @@ export const Todo = (props) => {
                     </span>
                 </label>
 
-                <div className='flex flex-col gap-1'>
+                <div className='flex flex-col gap-1 w-full'>
                     {/* Display title, strikethrough if completed */}
                     <div
                         onClick={() => props.toggleFullscreen(props.id, props.title, props.content)} className={`cursor-pointer text-[1.3rem] break-words whitespace-normal relative top-[-2.7px] w-full 
