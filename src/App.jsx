@@ -593,7 +593,7 @@ function App() {
         </div>
         {filteredTodos.length > 0 ? (<div className={`todoContainer flex flex-col scrollbar-custom items-center my-5 px-[15px] gap-1 border-2 ${minimal ? 'max-h-[62%]' : 'max-h-[55%]'} md:max-h-[80%] ${minimal ? 'rounded-[15px]' : 'rounded-[20px]'} border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
         ${isDark ? 'before:bg-[#343434]' : 'before:bg-[#FEF6C3]'}
-        before:h-[3px]
+        before:h-[0.5px]
         before:left-0
         before:pointer-events-none
         before:absolute
