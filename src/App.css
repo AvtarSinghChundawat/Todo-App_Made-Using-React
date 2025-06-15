@@ -1,8 +1,8 @@
 @font-face {
-  font-family: 'Evo';
-  src: url('./assets/Evo.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'Evo';
+    src: url('./assets/Evo.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 * {
@@ -41,6 +41,19 @@ body {
     border-radius: 10px;
 }
 
+@media (max-width:480px) {
+    .fullscreen div {
+        height: 85%;
+    }
+
+    .fullscreen {
+        gap:20px;
+    }
+
+    .fullscreen button{
+        font-size: 1.5rem;
+    }
+}
 
 #root {
     height: 100vh;

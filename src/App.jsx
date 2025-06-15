@@ -46,6 +46,15 @@ function App() {
     console.log(`minimal mode: ${minimal}`);
   }, [minimal]);
 
+  // ======= FULLSCREEN MODE =======
+  // ======= FULLSCREEN MODE =======
+  // ======= FULLSCREEN MODE =======
+  // ======= FULLSCREEN MODE =======
+  // ======= FULLSCREEN MODE =======
+  const [fullscreenTodo, setFullscreenTodo] = useState(null);
+  const [fullscreen, setFullscreen] = useState(false); // Toggle fullscreen mode
+  console.log(`Fullscreen mode: ${fullscreen}`); // Debug log
+
   // ======= SEARCH BAR =======
   // ======= SEARCH BAR =======
   // ======= SEARCH BAR =======
@@ -256,6 +265,25 @@ function App() {
   // ======= HANDLERS/FUNCTIONS =======
   // ======= HANDLERS/FUNCTIONS =======
 
+  // handleFullscreen
+  const handleFullscreen = (id, title, content) => {
+    setFullscreenTodo({ id, title, content });
+    setFullscreen(true);
+  };
+
+  const handleCloseFullscreen = () => {
+    setFullscreen(false);
+    setFullscreenTodo(null);
+  };
+
+  const toggleFullscreen = (id, title, content) => {
+    setFullscreen(!fullscreen); // Toggle fullscreen mode
+  }
+
+  useEffect(() => {
+    console.log(`Fullscreen mode: ${fullscreen}`);
+  }, [fullscreen])
+
   // handleToggle
   const handleToggle = () => setIsDark(!isDark); // Toggle theme
 
@@ -365,7 +393,26 @@ function App() {
   // ======= RENDER =======
 
   return (
-    <div className={`wrapper w-screen flex justify-center h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'}`}>
+    <div className={`wrapper w-screen flex justify-center relative h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'}`}>
+      <div className={`fullscreen ${fullscreen ? 'flex' : 'hidden'} flex-col items-center gap-[20px] absolute top-0 left-0 h-full w-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'} p-5 border border-[#6C63FF] z-[400]`}>
+        <div className='border border-[#6C63FF] h-full w-full p-5 pt-0 flex flex-col rounded-[14px] overflow-y-auto scrollbar-custom relative'>
+
+          {fullscreenTodo && (
+            <>
+              <h2 className={`sticky top-[0px] pb-[10px] pt-[15px] ${isDark ? 'bg-[#343434]' : 'bg-[#FEF6C3]'} ${isDark ? 'text-blue-300' : 'text-blue-700'} text-[2rem]`} style={{ lineHeight: 'normal', whiteSpace: 'pre-line' }}>{fullscreenTodo.title}</h2>
+              <p style={{ lineHeight: 'normal', whiteSpace: 'pre-line' }} className={`text-[1.125rem]`}>{fullscreenTodo.content}</p>
+            </>
+          )}
+        </div>
+        <button onClick={handleCloseFullscreen} className={`
+    ${isDark
+            ? 'bg-white text-black hover:shadow-[0_0_12px_3px_rgba(255,255,255,0.7)]'
+            : 'bg-[#6C63FF] text-white hover:shadow-[0_0_12px_3px_rgba(108,99,255,0.7)]'
+          }
+    transition-shadow cursor-pointer duration-200
+    px-[10px] py-[5px] rounded-[20px] w-fit
+  `}>Close</button>
+      </div>
       <div className="main flex flex-col items-center relative w-[88%] sm:w-[70%]">
         <div className={`w-[90%] sm:w-full`}>
           <header className='flex w-full justify-center items-center p-5 text-[2em]'>TODO APP</header>
@@ -523,7 +570,7 @@ function App() {
                   </div>
                   <div
                     className={`pointer-events-none absolute left-0 bottom-[4px] w-full h-[37px] 
-      ${isDark?'bg-[#232323]/80':'bg-black/55'}  
+      ${isDark ? 'bg-[#232323]/80' : 'bg-black/55'}  
       backdrop-blur-[1000px] rounded-[10px]`}
                     style={{
                       // Optional: add a border if you want to match the textarea
@@ -578,6 +625,7 @@ function App() {
                 onToggleCompleted={handleToggleCompleted}
                 onDelete={handleDeleteTodo}
                 minimal={minimal}
+                toggleFullscreen={handleFullscreen}
               />
             ))
           ) : (''
