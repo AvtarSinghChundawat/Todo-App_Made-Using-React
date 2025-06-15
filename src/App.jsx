@@ -53,7 +53,6 @@ function App() {
   // ======= FULLSCREEN MODE =======
   const [fullscreenTodo, setFullscreenTodo] = useState(null);
   const [fullscreen, setFullscreen] = useState(false); // Toggle fullscreen mode
-  console.log(`Fullscreen mode: ${fullscreen}`); // Debug log
 
   // ======= SEARCH BAR =======
   // ======= SEARCH BAR =======
@@ -275,14 +274,6 @@ function App() {
     setFullscreen(false);
     setFullscreenTodo(null);
   };
-
-  const toggleFullscreen = (id, title, content) => {
-    setFullscreen(!fullscreen); // Toggle fullscreen mode
-  }
-
-  useEffect(() => {
-    console.log(`Fullscreen mode: ${fullscreen}`);
-  }, [fullscreen])
 
   // handleToggle
   const handleToggle = () => setIsDark(!isDark); // Toggle theme
