@@ -171,12 +171,12 @@ function App() {
   }, [todos]);
 
   useEffect(() => {
-    if (isDark){
+    if (isDark) {
       document.body.style.backgroundColor = '#343434'; // Dark mode background
     } else {
       document.body.style.backgroundColor = '#FEF6C3'; // Light mode background
     }
-  },[isDark]);
+  }, [isDark]);
 
   // useEffect(() => {
   //   if (isVisible) {
@@ -365,81 +365,84 @@ function App() {
   return (
     <div className={`wrapper w-screen flex justify-center h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'}`}>
       <div className="main flex flex-col items-center relative w-[88%] sm:w-[70%]">
-        <header className='flex w-screen justify-center items-center p-5 text-[2em]'>TODO APP</header>
-        <div className="search w-full flex gap-4">
-          <div className={`rounded-[7px] input flex w-full gap-1 items-center border ${isDark ? 'border-white' : 'border-black'} pr-2 pl-2`}>
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" fill={isDark ? 'white' : 'black'} viewBox="0 0 50 50">
-              <path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z"></path>
-            </svg>
+        <div className={`w-[90%] sm:w-full`}>
+          <header className='flex w-full justify-center items-center p-5 text-[2em]'>TODO APP</header>
+          <div className="search w-full flex gap-4">
+            <div className={`rounded-[7px] input flex w-full gap-1 items-center border ${isDark ? 'border-white' : 'border-black'} pr-2 pl-2`}>
+              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" fill={isDark ? 'white' : 'black'} viewBox="0 0 50 50">
+                <path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z"></path>
+              </svg>
 
-            <div className="inputWrapper flex justify-center items-center w-full">
-              <input type="search" autoComplete="off"
-                autoCorrect="off"
-                spellCheck={false} name="search" id="searchInput"
-                className={`w-full focus:outline-0 focus:border-0 p-2 ${isDark ? 'dark' : 'light'}}`}
-                placeholder='Search Todo...'
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                style={{
-                  WebkitTextFillColor: isDark ? 'white' : 'black',
-                }}
-              />
-              {inputValue && (
-                <img onClick={clearInput} src={close} alt="" className={`w-[25px] h-[25px] cursor-pointer ${isDark ? 'invert' : ''}`} />
-              )}
+              <div className="inputWrapper flex justify-center items-center w-full">
+                <input type="search" autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false} name="search" id="searchInput"
+                  className={`w-full focus:outline-0 focus:border-0 p-2 ${isDark ? 'dark' : 'light'}}`}
+                  placeholder='Search Todo...'
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  style={{
+                    WebkitTextFillColor: isDark ? 'white' : 'black',
+                  }}
+                />
+                {inputValue && (
+                  <img onClick={clearInput} src={close} alt="" className={`w-[25px] h-[25px] cursor-pointer ${isDark ? 'invert' : ''}`} />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className='dropdownBox flex justify-center gap-3.5'>
-            <div className='drop dropdown relative' ref={dropdownRef}>
-              <button ref={buttonRef} onClick={toggleDropdown} className={`selector ${isDark ? 'text-white' : 'text-black'}`}>
-                <span>{selectedOption}</span>
-                <span className='dropdownSvgContainer flex gap-2'>
-                  <span></span>
-                  <svg fill='white' height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
-                    <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+            <div className='dropdownBox flex justify-center gap-3.5'>
+              <div className='drop dropdown relative' ref={dropdownRef}>
+                <button ref={buttonRef} onClick={toggleDropdown} className={`selector ${isDark ? 'text-white' : 'text-black'}`}>
+                  <span>{selectedOption}</span>
+                  <span className='dropdownSvgContainer flex gap-2'>
+                    <span></span>
+                    <svg fill='white' height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
+                      <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+                    </svg>
+                  </span>
+                  {isOpen && (
+                    <div className={`absolute top-full left-0 mt-1 w-full ${isDark ? 'bg-[#333] text-white' : 'bg-[#FEF6C3] text-black'} rounded-[15px] shadow-lg border border-[#6C63FF] z-10`}>
+                      <ul className={`divide-y ${isDark ? 'divide-gray-200' : 'divide-[black]'} overflow-hidden`}>
+                        {options.map((option, index) => (
+                          <li
+                            key={index}
+                            onClick={() => handleOptionClick(option)}
+                            className={`flex items-center justify-start pr-[12px] pl-[15px] cursor-pointer ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-300'} transition first:rounded-t-[15px] last:rounded-b-[15px] text-[#6C63FF]`}
+                            style={{ height: `${buttonHeight}px` }}
+                          >
+                            {option}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </button>
+              </div>
+
+              <button onClick={handleToggle} className="mode border-none bg-[#6C63FF] pr-[10px] pl-[10px] rounded-[7px] cursor-pointer hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF]">
+                {isDark ? (
+                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.1576 1.15764C12.1576 0.518299 11.6394 0 11 0C10.3606 0 9.84235 0.518299 9.84235 1.15764V1.73887C9.84235 2.37822 10.3606 2.89651 11 2.89651C11.6394 2.89651 12.1576 2.37822 12.1576 1.73887V1.15764ZM18.7782 4.85893C19.2302 4.40683 19.2302 3.67386 18.7782 3.22177C18.3261 2.76969 17.5931 2.76969 17.141 3.22177L16.73 3.63282C16.2779 4.08492 16.2779 4.81789 16.73 5.26998C17.182 5.72206 17.915 5.72206 18.3671 5.26998L18.7782 4.85893ZM4.85889 3.22184C4.40681 2.76976 3.67383 2.76976 3.22175 3.22184C2.76967 3.67393 2.76967 4.4069 3.22175 4.859L3.63273 5.26998C4.08483 5.72206 4.8178 5.72206 5.26989 5.26998C5.72197 4.81789 5.72197 4.08492 5.26989 3.63282L4.85889 3.22184ZM1.15764 9.84235C0.518299 9.84235 0 10.3606 0 11C0 11.6394 0.518299 12.1576 1.15764 12.1576H1.73884C2.37819 12.1576 2.89648 11.6394 2.89648 11C2.89648 10.3606 2.37819 9.84235 1.73884 9.84235H1.15764ZM20.2611 9.84235C19.6217 9.84235 19.1035 10.3606 19.1035 11C19.1035 11.6394 19.6217 12.1576 20.2611 12.1576H20.8424C21.4817 12.1576 22 11.6394 22 11C22 10.3606 21.4817 9.84235 20.8424 9.84235H20.2611ZM5.26989 18.3672C5.72197 17.9151 5.72197 17.1821 5.26989 16.7301C4.8178 16.2779 4.08483 16.2779 3.63273 16.7301L3.22177 17.141C2.76968 17.5931 2.76968 18.3261 3.22176 18.7782C3.67385 19.2302 4.40682 19.2302 4.85892 18.7782L5.26989 18.3672ZM18.3671 16.7301C17.915 16.2779 17.182 16.2779 16.73 16.7301C16.2779 17.1821 16.2779 17.9151 16.73 18.3672L17.1409 18.7782C17.5931 19.2303 18.326 19.2303 18.7782 18.7782C19.2302 18.3261 19.2302 17.5932 18.7782 17.141L18.3671 16.7301ZM12.1576 20.2611C12.1576 19.6217 11.6394 19.1035 11 19.1035C10.3606 19.1035 9.84235 19.6217 9.84235 20.2611V20.8424C9.84235 21.4817 10.3606 22 11 22C11.6394 22 12.1576 21.4817 12.1576 20.8424V20.2611ZM6.36943 11C6.36943 8.4426 8.4426 6.36943 11 6.36943C13.5573 6.36943 15.6305 8.4426 15.6305 11C15.6305 13.5573 13.5573 15.6305 11 15.6305C8.4426 15.6305 6.36943 13.5573 6.36943 11ZM11 4.05415C7.1639 4.05415 4.05415 7.1639 4.05415 11C4.05415 14.8361 7.1639 17.9458 11 17.9458C14.8361 17.9458 17.9458 14.8361 17.9458 11C17.9458 7.1639 14.8361 4.05415 11 4.05415Z" fill="#F7F7F7"></path>
                   </svg>
-                </span>
-                {isOpen && (
-                  <div className={`absolute top-full left-0 mt-1 w-full ${isDark ? 'bg-[#333] text-white' : 'bg-[#FEF6C3] text-black'} rounded-[15px] shadow-lg border border-[#6C63FF] z-10`}>
-                    <ul className={`divide-y ${isDark ? 'divide-gray-200' : 'divide-[black]'} overflow-hidden`}>
-                      {options.map((option, index) => (
-                        <li
-                          key={index}
-                          onClick={() => handleOptionClick(option)}
-                          className={`flex items-center justify-start pr-[12px] pl-[15px] cursor-pointer ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-300'} transition first:rounded-t-[15px] last:rounded-b-[15px] text-[#6C63FF]`}
-                          style={{ height: `${buttonHeight}px` }}
-                        >
-                          {option}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                ) : (
+                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.1249 0.548798C11.3387 0.917354 11.321 1.3762 11.0791 1.72705C10.3455 2.79152 9.91599 4.08062 9.91599 5.47334C9.91599 9.12428 12.8757 12.084 16.5266 12.084C17.9194 12.084 19.2085 11.6545 20.2729 10.9208C20.6238 10.6791 21.0826 10.6613 21.4512 10.8751C21.8197 11.089 22.0319 11.4962 21.9961 11.9208C21.5191 17.567 16.7867 22 11.0178 22C4.93282 22 0 17.0672 0 10.9822C0 5.21328 4.43301 0.480873 10.0792 0.00392422C10.5038 -0.0319387 10.911 0.180242 11.1249 0.548798ZM8.17985 2.63461C4.70452 3.81573 2.20355 7.10732 2.20355 10.9822C2.20355 15.8502 6.14981 19.7964 11.0178 19.7964C14.8927 19.7964 18.1843 17.2955 19.3654 13.8202C18.4741 14.1232 17.5191 14.2875 16.5266 14.2875C11.6587 14.2875 7.71244 10.3413 7.71244 5.47334C7.71244 4.48086 7.87682 3.52582 8.17985 2.63461Z" fill="#F7F7F7"></path>
+                  </svg>
                 )}
               </button>
             </div>
-
-            <button onClick={handleToggle} className="mode border-none bg-[#6C63FF] pr-[10px] pl-[10px] rounded-[7px] cursor-pointer hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF]">
-              {isDark ? (
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12.1576 1.15764C12.1576 0.518299 11.6394 0 11 0C10.3606 0 9.84235 0.518299 9.84235 1.15764V1.73887C9.84235 2.37822 10.3606 2.89651 11 2.89651C11.6394 2.89651 12.1576 2.37822 12.1576 1.73887V1.15764ZM18.7782 4.85893C19.2302 4.40683 19.2302 3.67386 18.7782 3.22177C18.3261 2.76969 17.5931 2.76969 17.141 3.22177L16.73 3.63282C16.2779 4.08492 16.2779 4.81789 16.73 5.26998C17.182 5.72206 17.915 5.72206 18.3671 5.26998L18.7782 4.85893ZM4.85889 3.22184C4.40681 2.76976 3.67383 2.76976 3.22175 3.22184C2.76967 3.67393 2.76967 4.4069 3.22175 4.859L3.63273 5.26998C4.08483 5.72206 4.8178 5.72206 5.26989 5.26998C5.72197 4.81789 5.72197 4.08492 5.26989 3.63282L4.85889 3.22184ZM1.15764 9.84235C0.518299 9.84235 0 10.3606 0 11C0 11.6394 0.518299 12.1576 1.15764 12.1576H1.73884C2.37819 12.1576 2.89648 11.6394 2.89648 11C2.89648 10.3606 2.37819 9.84235 1.73884 9.84235H1.15764ZM20.2611 9.84235C19.6217 9.84235 19.1035 10.3606 19.1035 11C19.1035 11.6394 19.6217 12.1576 20.2611 12.1576H20.8424C21.4817 12.1576 22 11.6394 22 11C22 10.3606 21.4817 9.84235 20.8424 9.84235H20.2611ZM5.26989 18.3672C5.72197 17.9151 5.72197 17.1821 5.26989 16.7301C4.8178 16.2779 4.08483 16.2779 3.63273 16.7301L3.22177 17.141C2.76968 17.5931 2.76968 18.3261 3.22176 18.7782C3.67385 19.2302 4.40682 19.2302 4.85892 18.7782L5.26989 18.3672ZM18.3671 16.7301C17.915 16.2779 17.182 16.2779 16.73 16.7301C16.2779 17.1821 16.2779 17.9151 16.73 18.3672L17.1409 18.7782C17.5931 19.2303 18.326 19.2303 18.7782 18.7782C19.2302 18.3261 19.2302 17.5932 18.7782 17.141L18.3671 16.7301ZM12.1576 20.2611C12.1576 19.6217 11.6394 19.1035 11 19.1035C10.3606 19.1035 9.84235 19.6217 9.84235 20.2611V20.8424C9.84235 21.4817 10.3606 22 11 22C11.6394 22 12.1576 21.4817 12.1576 20.8424V20.2611ZM6.36943 11C6.36943 8.4426 8.4426 6.36943 11 6.36943C13.5573 6.36943 15.6305 8.4426 15.6305 11C15.6305 13.5573 13.5573 15.6305 11 15.6305C8.4426 15.6305 6.36943 13.5573 6.36943 11ZM11 4.05415C7.1639 4.05415 4.05415 7.1639 4.05415 11C4.05415 14.8361 7.1639 17.9458 11 17.9458C14.8361 17.9458 17.9458 14.8361 17.9458 11C17.9458 7.1639 14.8361 4.05415 11 4.05415Z" fill="#F7F7F7"></path>
-                </svg>
-              ) : (
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11.1249 0.548798C11.3387 0.917354 11.321 1.3762 11.0791 1.72705C10.3455 2.79152 9.91599 4.08062 9.91599 5.47334C9.91599 9.12428 12.8757 12.084 16.5266 12.084C17.9194 12.084 19.2085 11.6545 20.2729 10.9208C20.6238 10.6791 21.0826 10.6613 21.4512 10.8751C21.8197 11.089 22.0319 11.4962 21.9961 11.9208C21.5191 17.567 16.7867 22 11.0178 22C4.93282 22 0 17.0672 0 10.9822C0 5.21328 4.43301 0.480873 10.0792 0.00392422C10.5038 -0.0319387 10.911 0.180242 11.1249 0.548798ZM8.17985 2.63461C4.70452 3.81573 2.20355 7.10732 2.20355 10.9822C2.20355 15.8502 6.14981 19.7964 11.0178 19.7964C14.8927 19.7964 18.1843 17.2955 19.3654 13.8202C18.4741 14.1232 17.5191 14.2875 16.5266 14.2875C11.6587 14.2875 7.71244 10.3413 7.71244 5.47334C7.71244 4.48086 7.87682 3.52582 8.17985 2.63461Z" fill="#F7F7F7"></path>
-                </svg>
-              )}
+            <button onClick={() => {
+              setMinimal(!minimal)
+            }} className={`cursor-pointer addTodo relative bg-[#6C63FF] rounded-[10px] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] w-full text-white`} style={{ minHeight: `${buttonHeight}px` }}>
+              <span className='h-[24px] flex justify-center items-center'>{`${minimal ? 'Normal View' : 'Seamless View'}`}</span>
+            </button>
+            <button onClick={handleShowModal} className={`cursor-pointer z-[100] addTodo relative md:absolute md:bottom-[30px] md:right-[10px] bg-[#6C63FF] md:p-3 rounded-[50%] justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] ${minimal ? 'hidden' : 'flex'}`} style={{ minHeight: window.innerWidth < 768 ? `${buttonHeight}px` : 'auto' }}>
+              <svg width="24px" height="24px" viewBox="-1.4 -1.4 22.80 22.80" xmlns="http://www.w3.org/2000/svg" fill="white" stroke="white" stroke-width="1.42"><g id="SVGRepo_bgCarrier" stroke-whiteidth="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="" stroke-whiteidth="0.24"></g><g id="SVGRepo_iconCarrier"> <path fill="white" d="M10,-1.77635684e-15 C10.4232029,-1.69861573e-15 10.7662767,0.343073746 10.7662767,0.766276659 L10.766,9.233 L19.2337233,9.23372334 C19.6569263,9.23372334 20,9.57679709 20,10 C20,10.4232029 19.6569263,10.7662767 19.2337233,10.7662767 L10.766,10.766 L10.7662767,19.2337233 C10.7662767,19.6569263 10.4232029,20 10,20 C9.57679709,20 9.23372334,19.6569263 9.23372334,19.2337233 L9.233,10.766 L0.766276659,10.7662767 C0.343073746,10.7662767 0,10.4232029 0,10 C0,9.57679709 0.343073746,9.23372334 0.766276659,9.23372334 L9.233,9.233 L9.23372334,0.766276659 C9.23372334,0.343073746 9.57679709,-1.85409795e-15 10,-1.77635684e-15 Z"></path> </g></svg>
             </button>
           </div>
-          <button onClick={() => {
-            setMinimal(!minimal)
-          }} className={`cursor-pointer addTodo relative bg-[#6C63FF] rounded-[10px] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] w-full text-white`} style={{ minHeight: `${buttonHeight}px` }}>
-            <span className='h-[24px] flex justify-center items-center'>{`${minimal ? 'Normal View' : 'Seamless View'}`}</span>
-          </button>
-          <button onClick={handleShowModal} className={`cursor-pointer z-[100] addTodo relative md:absolute md:bottom-[30px] md:right-[10px] bg-[#6C63FF] md:p-3 rounded-[50%] justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] ${minimal ? 'hidden' : 'flex'}`} style={{ minHeight: window.innerWidth < 768 ? `${buttonHeight}px` : 'auto' }}>
-            <svg width="24px" height="24px" viewBox="-1.4 -1.4 22.80 22.80" xmlns="http://www.w3.org/2000/svg" fill="white" stroke="white" stroke-width="1.42"><g id="SVGRepo_bgCarrier" stroke-whiteidth="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="" stroke-whiteidth="0.24"></g><g id="SVGRepo_iconCarrier"> <path fill="white" d="M10,-1.77635684e-15 C10.4232029,-1.69861573e-15 10.7662767,0.343073746 10.7662767,0.766276659 L10.766,9.233 L19.2337233,9.23372334 C19.6569263,9.23372334 20,9.57679709 20,10 C20,10.4232029 19.6569263,10.7662767 19.2337233,10.7662767 L10.766,10.766 L10.7662767,19.2337233 C10.7662767,19.6569263 10.4232029,20 10,20 C9.57679709,20 9.23372334,19.6569263 9.23372334,19.2337233 L9.233,10.766 L0.766276659,10.7662767 C0.343073746,10.7662767 0,10.4232029 0,10 C0,9.57679709 0.343073746,9.23372334 0.766276659,9.23372334 L9.233,9.233 L9.23372334,0.766276659 C9.23372334,0.343073746 9.57679709,-1.85409795e-15 10,-1.77635684e-15 Z"></path> </g></svg>
-          </button>
         </div>
+
         <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm min-h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
           <div className={`modalBox ${isVisible ? 'visible' : ''} flex flex-col h-screen sm:h-auto max-h-screen items-center gap-3 px-5 py-5 rounded-2xl w-full ${isDark ? 'border-[#6C63FF]' : 'border-[#FEF6C3]'}`}>
             <form onSubmit={(e) => {
@@ -538,7 +541,7 @@ function App() {
             </form>
           </div>
         </div>
-        {filteredTodos.length > 0 ? (<div className={`todoContainer flex flex-col scrollbar-custom items-center my-5 px-[15px] gap-1 border-2 ${minimal ? 'max-h-[61%]' : 'max-h-[54%]'} md:max-h-[80%] ${minimal ? 'rounded-[15px]' : 'rounded-[20px]'} border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
+        {filteredTodos.length > 0 ? (<div className={`todoContainer flex flex-col scrollbar-custom items-center my-5 px-[15px] gap-1 border-2 ${minimal ? 'max-h-[62%]' : 'max-h-[55%]'} md:max-h-[80%] ${minimal ? 'rounded-[15px]' : 'rounded-[20px]'} border-[#6C63FF] w-full overflow-scroll overflow-x-hidden relative before:content-a
         ${isDark ? 'before:bg-[#343434]' : 'before:bg-[#FEF6C3]'}
         before:h-[3px]
         before:left-0
