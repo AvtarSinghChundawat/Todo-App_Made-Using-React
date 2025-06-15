@@ -521,6 +521,16 @@ function App() {
                       <path d="M7 9l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
+                  <div
+                    className={`pointer-events-none absolute left-0 bottom-[4px] w-full h-[37px] 
+      ${isDark?'bg-[#232323]/80':'bg-black/55'}  
+      backdrop-blur-[1000px] rounded-[10px]`}
+                    style={{
+                      // Optional: add a border if you want to match the textarea
+                      borderBottomLeftRadius: '10px',
+                      borderBottomRightRadius: '10px',
+                    }}
+                  />
                 </div>
 
                 <div className="flex justify-between gap-4 mt-6">
