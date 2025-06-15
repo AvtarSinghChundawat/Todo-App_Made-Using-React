@@ -8,67 +8,157 @@ import './App.css';
 import { Todo } from './components/todo.jsx';
 
 function App() {
-  // ======= STATE =======
-  // ======= STATE =======
-  // ======= STATE =======
-  // ======= STATE =======
-  // ======= STATE =======
-  // ======= STATE ======= 
-
-  const [inputValue, setInputValue] = useState(''); // Search bar value
-  const [isOpen, setIsOpen] = useState(false); // Dropdown open/close
-  const [selectedOption, setSelectedOption] = useState('ALL'); // Dropdown filter option
-  const [buttonHeight, setButtonHeight] = useState(0); // Height for dropdown styling
-  const [isVisible, setIsVisible] = useState(false); // Modal visibility
-  const [isDark, setIsDark] = useState(() => { // Theme (dark/light)
+  // ======= THEME (Dark/Light) =======
+  // ======= THEME (Dark/Light) =======
+  // ======= THEME (Dark/Light) =======
+  // ======= THEME (Dark/Light) =======
+  // ======= THEME (Dark/Light) =======
+  const [isDark, setIsDark] = useState(() => { // Theme mode, loaded from localStorage on mount
     const savedMode = localStorage.getItem('theme');
     return savedMode ? savedMode === 'dark' : true;
   });
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentTodoId, setCurrentTodoId] = useState(null);
-  const [minimal, setMinimal] = useState(false); // Minimal mode
 
-  useEffect(() => {
+  useEffect(() => { // Set body background color according to theme
+    if (isDark) {
+      document.body.style.backgroundColor = '#343434';
+    } else {
+      document.body.style.backgroundColor = '#FEF6C3';
+    }
+  }, [isDark]);
+
+  useEffect(() => { // Persist theme to localStorage
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }, [isDark]);
+
+  useEffect(() => { // Set theme from localStorage on mount
+    const savedMode = localStorage.getItem('theme');
+    if (savedMode) setIsDark(savedMode === 'dark');
+  }, []);
+
+  // ======= MINIMAL MODE =======
+  // ======= MINIMAL MODE =======
+  // ======= MINIMAL MODE =======
+  // ======= MINIMAL MODE =======
+  // ======= MINIMAL MODE =======
+  const [minimal, setMinimal] = useState(false); // Toggle minimal UI
+
+  useEffect(() => { // Log minimal mode changes (debug)
     console.log(`minimal mode: ${minimal}`);
-  }, [minimal])
-  const contentTextareaRef = useRef(null);
-  const isResizingUp = useRef(false);
-  const lastMouseYUp = useRef(0);
-  const lastHeightUp = useRef(0);
-  const mouseMovedUp = useRef(false);
+  }, [minimal]);
 
-  const isResizingDown = useRef(false);
-  const lastMouseYDown = useRef(0);
-  const lastHeightDown = useRef(0);
-  const mouseMovedDown = useRef(false);
+  // ======= SEARCH BAR =======
+  // ======= SEARCH BAR =======
+  // ======= SEARCH BAR =======
+  // ======= SEARCH BAR =======
+  // ======= SEARCH BAR =======
+  const [inputValue, setInputValue] = useState(''); // Value of search input
 
+  const clearInput = () => setInputValue(''); // Clear search bar
 
-  // bottom left icon logic (up resize)
-  function handleResizeUpMouseDown(e) {
+  // ======= DROPDOWN FILTER =======
+  // ======= DROPDOWN FILTER =======
+  // ======= DROPDOWN FILTER =======
+  // ======= DROPDOWN FILTER =======
+  // ======= DROPDOWN FILTER =======
+  const [isOpen, setIsOpen] = useState(false); // Dropdown open/close
+  const [selectedOption, setSelectedOption] = useState('ALL'); // Dropdown filter value
+  const [buttonHeight, setButtonHeight] = useState(0); // Height for dropdown styling
+  const buttonRef = useRef(null); // Ref for dropdown button (height)
+  const dropdownRef = useRef(null); // Ref for dropdown (outside click)
+
+  useEffect(() => { // Update dropdown button height for styling
+    if (buttonRef.current) setButtonHeight(buttonRef.current.offsetHeight);
+  });
+
+  useEffect(() => { // Close dropdown on outside click
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('click', handleClickOutside);
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropdown = () => setIsOpen(!isOpen); // Toggle dropdown open/close
+
+  const handleOptionClick = (option) => { // Select dropdown option
+    setSelectedOption(option);
+    setIsOpen(false);
+  };
+
+  const options = ['ALL', 'COMPLETE', 'INCOMPLETE']; // Dropdown options
+
+  // ======= MODAL (Add/Edit Todo) =======
+  // ======= MODAL (Add/Edit Todo) =======
+  // ======= MODAL (Add/Edit Todo) =======
+  // ======= MODAL (Add/Edit Todo) =======
+  // ======= MODAL (Add/Edit Todo) =======
+  const [isVisible, setIsVisible] = useState(false); // Modal visibility
+  const [isEditing, setIsEditing] = useState(false); // Edit mode
+  const [currentTodoId, setCurrentTodoId] = useState(null); // Editing todo id
+  const inputRef = useRef(null); // Ref for modal input (autofocus)
+
+  useEffect(() => { // Autofocus input when modal opens
+    if (isVisible && inputRef.current) inputRef.current.focus();
+  }, [isVisible]);
+
+  const handleShowModal = () => setIsVisible(true); // Show modal
+
+  const handleHideModal = () => { // Hide modal and reset edit state
+    setIsVisible(false);
+    setIsEditing(false);
+    setCurrentTodoId(null);
+    setTodoTitle('');
+    setTodoContent('');
+  };
+
+  // ======= TEXTAREA RESIZE (Modal) =======
+  // ======= TEXTAREA RESIZE (Modal) =======
+  // ======= TEXTAREA RESIZE (Modal) =======
+  // ======= TEXTAREA RESIZE (Modal) =======
+  // ======= TEXTAREA RESIZE (Modal) =======
+  const contentTextareaRef = useRef(null); // Ref for textarea (manual resize)
+
+  // Top resize (up)
+  const isResizingUp = useRef(false); // Is resizing up
+  const lastMouseYUp = useRef(0); // Last mouse Y for up resize
+  const lastHeightUp = useRef(0); // Last height for up resize
+  const mouseMovedUp = useRef(false); // Mouse moved flag (up)
+  // Bottom resize (down)
+  const isResizingDown = useRef(false); // Is resizing down
+  const lastMouseYDown = useRef(0); // Last mouse Y for down resize
+  const lastHeightDown = useRef(0); // Last height for down resize
+  const mouseMovedDown = useRef(false); // Mouse moved flag (down)
+
+  // Up resize handlers
+  // Up resize handlers
+  // Up resize handlers
+  function handleResizeUpMouseDown(e) { // Start up resize
     e.preventDefault();
     isResizingUp.current = true;
     mouseMovedUp.current = false;
     lastMouseYUp.current = e.clientY;
     lastHeightUp.current = contentTextareaRef.current.offsetHeight;
-
     document.addEventListener('mousemove', handleResizeUpMouseMove);
     document.addEventListener('mouseup', handleResizeUpMouseUp);
   }
 
-  function handleResizeUpMouseMove(e) {
+  function handleResizeUpMouseMove(e) { // Resize textarea up
     mouseMovedUp.current = true;
     if (!isResizingUp.current) return;
     const diff = e.clientY - lastMouseYUp.current;
     let newHeight = lastHeightUp.current + diff;
-    const minHeight = 64; // 4rem
-    const maxHeight = window.innerHeight * 0.4; // 40vh
+    const minHeight = 64;
+    const maxHeight = window.innerHeight * 0.4;
     newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
     contentTextareaRef.current.style.height = `${newHeight}px`;
   }
 
-  function handleResizeUpMouseUp() {
+  function handleResizeUpMouseUp() { // End up resize or shrink on click
     if (!mouseMovedUp.current) {
-      // Click: decrease height
       const textarea = contentTextareaRef.current;
       if (textarea) {
         const minHeight = 64;
@@ -81,32 +171,32 @@ function App() {
     document.removeEventListener('mouseup', handleResizeUpMouseUp);
   }
 
-  // bottom right icon logic (down resize)
-  function handleResizeDownMouseDown(e) {
+  // Down resize handlers
+  // Down resize handlers
+  // Down resize handlers
+  function handleResizeDownMouseDown(e) { // Start down resize
     e.preventDefault();
     isResizingDown.current = true;
     mouseMovedDown.current = false;
     lastMouseYDown.current = e.clientY;
     lastHeightDown.current = contentTextareaRef.current.offsetHeight;
-
     document.addEventListener('mousemove', handleResizeDownMouseMove);
     document.addEventListener('mouseup', handleResizeDownMouseUp);
   }
 
-  function handleResizeDownMouseMove(e) {
+  function handleResizeDownMouseMove(e) { // Resize textarea down
     mouseMovedDown.current = true;
     if (!isResizingDown.current) return;
     const diff = e.clientY - lastMouseYDown.current;
     let newHeight = lastHeightDown.current + diff;
-    const minHeight = 64; // 4rem
-    const maxHeight = window.innerHeight * 0.4; // 40vh
+    const minHeight = 64;
+    const maxHeight = window.innerHeight * 0.4;
     newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
     contentTextareaRef.current.style.height = `${newHeight}px`;
   }
 
-  function handleResizeDownMouseUp() {
+  function handleResizeDownMouseUp() { // End down resize or grow on click
     if (!mouseMovedDown.current) {
-      // Click: increase height
       const textarea = contentTextareaRef.current;
       if (textarea) {
         const maxHeight = window.innerHeight * 0.4;
@@ -119,145 +209,60 @@ function App() {
     document.removeEventListener('mouseup', handleResizeDownMouseUp);
   }
 
-  // const [todos, setTodos] = useState(() => { // Main todos array (with completed property)
-  //   const stored = localStorage.getItem('todos');
-  //   return stored ? JSON.parse(stored) : [];
-  // });
-  const [todos, setTodos] = useState(() => {
+  // ======= TODOS STATE & LOGIC =======
+  // ======= TODOS STATE & LOGIC =======
+  // ======= TODOS STATE & LOGIC =======
+  // ======= TODOS STATE & LOGIC =======
+  // ======= TODOS STATE & LOGIC =======
+  const [todos, setTodos] = useState(() => { // Main todos array, loaded from localStorage or default
     const stored = localStorage.getItem('todos');
     if (stored) {
       const parsed = JSON.parse(stored);
-      // If stored is an empty array, show default todo
       if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed;
       }
     }
-    // Default todo for new users or empty storage
-    return [
-      {
-        id: Date.now(),
-        title: "Hey wassup",
-        content: "Avtar this side, I made this todo app using vite and react, used tailwind css for styling and of course html, hope you like it :)",
-        completed: false
-      }
-    ];
+    return [{
+      id: Date.now(),
+      title: "Hey wassup",
+      content: "Avtar this side, I made this todo app using vite and react, used tailwind css for styling and of course html, hope you like it :)",
+      completed: false
+    }];
   });
+
+  useEffect(() => { // Persist todos to localStorage on change
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
 
   const [todoTitle, setTodoTitle] = useState(''); // New todo title input
   const [todoContent, setTodoContent] = useState(''); // New todo content input
-  const [recentlyDeleted, setRecentlyDeleted] = useState([]); // Store multiple deleted todos
-  // Last deleted todo (for undo)
-  const [showUndo, setShowUndo] = useState(false); // Undo button visibility
 
-  // ======= REFS =======
-  // ======= REFS =======
-  // ======= REFS =======
-  // ======= REFS =======
-  // ======= REFS =======
+  // ======= UNDO DELETE LOGIC =======
+  // ======= UNDO DELETE LOGIC =======
+  // ======= UNDO DELETE LOGIC =======
+  const [recentlyDeleted, setRecentlyDeleted] = useState([]); // Stack of deleted todos for undo
+  const [showUndo, setShowUndo] = useState(false); // Show undo button
+  const undoTimeoutRef = useRef(null); // Ref for undo timeout
 
-  const undoTimeoutRef = useRef(null); // Timeout for undo button
-  const buttonRef = useRef(null); // Ref for dropdown button (for height)
-  const dropdownRef = useRef(null); // Ref for dropdown menu (for outside click)
-  const inputRef = useRef(null); // Ref for modal input (for autofocus)
-
-  // ======= EFFECTS =======
-  // ======= EFFECTS =======
-  // ======= EFFECTS =======
-  // ======= EFFECTS =======
-  // ======= EFFECTS =======
-
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos)); // Persist todos to localStorage on change
-  }, [todos]);
-
-  useEffect(() => {
-    if (isDark) {
-      document.body.style.backgroundColor = '#343434'; // Dark mode background
-    } else {
-      document.body.style.backgroundColor = '#FEF6C3'; // Light mode background
-    }
-  }, [isDark]);
-
-  // useEffect(() => {
-  //   if (isVisible) {
-  //     document.body.style.overflow = 'auto'; // Enable scrolling
-  //   } else {
-  //     document.body.style.overflow = 'hidden'; // Disable scrolling
-  //   }
-  //   // Cleanup on unmount
-  //   return () => {
-  //     document.body.style.overflow = '';
-  //   };
-  // }, [isVisible]);
-
-  useEffect(() => {
+  useEffect(() => { // Cleanup undo timeout on unmount
     return () => {
-      if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current); // Cleanup undo timeout on unmount
+      if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     };
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => { // Close dropdown if clicking outside
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener('click', handleClickOutside);
-    return () => {
-      window.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    const savedMode = localStorage.getItem('theme');
-    if (savedMode) setIsDark(savedMode === 'dark'); // Set theme from localStorage on mount
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('theme', isDark ? 'dark' : 'light'); // Persist theme to localStorage
-  }, [isDark]);
-
-  useEffect(() => {
-    if (buttonRef.current) setButtonHeight(buttonRef.current.offsetHeight); // Update dropdown height
-  });
-
-  useEffect(() => {
-    if (isVisible && inputRef.current) inputRef.current.focus(); // Autofocus modal input
-  }, [isVisible]);
-
   // ======= HANDLERS/FUNCTIONS =======
   // ======= HANDLERS/FUNCTIONS =======
   // ======= HANDLERS/FUNCTIONS =======
   // ======= HANDLERS/FUNCTIONS =======
   // ======= HANDLERS/FUNCTIONS =======
 
-  const handleShowModal = () => setIsVisible(true); // Show modal
-  const handleHideModal = () => {
-    setIsVisible(false);
-    setIsEditing(false);
-    setCurrentTodoId(null);
-    setTodoTitle('');
-    setTodoContent('');
-  };
-
-
-  const options = ['ALL', 'COMPLETE', 'INCOMPLETE']; // Dropdown options
-
+  // handleToggle
   const handleToggle = () => setIsDark(!isDark); // Toggle theme
 
-  const clearInput = () => setInputValue(''); // Clear search input
-
-  const toggleDropdown = () => setIsOpen(!isOpen); // Toggle dropdown open/close
-
-  const handleOptionClick = (option) => { // Handle dropdown option click
-    setSelectedOption(option);
-    setIsOpen(false);
-  };
-
-  const handleAddTodo = () => {
+  // handleAddTodo
+  const handleAddTodo = () => { // Add or update todo
     if (todoTitle.trim()) {
       if (isEditing) {
-        // Update existing todo
         setTodos(todos.map(todo =>
           todo.id === currentTodoId
             ? { ...todo, title: todoTitle, content: todoContent }
@@ -266,7 +271,6 @@ function App() {
         setIsEditing(false);
         setCurrentTodoId(null);
       } else {
-        // Create new todo
         setTodos([...todos, {
           id: Date.now(),
           title: todoTitle,
@@ -280,7 +284,8 @@ function App() {
     }
   };
 
-  const handleEditClick = (id, title, content) => {
+  // handleEditClick
+  const handleEditClick = (id, title, content) => { // Prepare modal for editing
     setTodoTitle(title);
     setTodoContent(content);
     setCurrentTodoId(id);
@@ -288,28 +293,26 @@ function App() {
     setIsVisible(true);
   };
 
-  const handleDeleteTodo = (id) => {
+  // handleDeleteTodo
+  const handleDeleteTodo = (id) => { // Delete todo and enable undo
     const todoToDelete = todos.find(todo => todo.id === id);
     setTodos(prev => prev.filter(todo => todo.id !== id));
-    setRecentlyDeleted(prev => [todoToDelete, ...prev]); // Add to stack
+    setRecentlyDeleted(prev => [todoToDelete, ...prev]);
     setShowUndo(true);
-
-    // Clear and restart timer
     if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     undoTimeoutRef.current = setTimeout(() => {
       setShowUndo(false);
-      setRecentlyDeleted([]); // Clear stack after 5s
+      setRecentlyDeleted([]);
     }, 5000);
   };
 
-  const handleUndo = () => {
+  // handleUndo
+  const handleUndo = () => { // Undo last delete
     if (recentlyDeleted.length > 0) {
       const [lastDeleted, ...rest] = recentlyDeleted;
       setTodos(prev => [lastDeleted, ...prev]);
       setRecentlyDeleted(rest);
-
       if (rest.length > 0) {
-        // Restart timer for next undo
         setShowUndo(true);
         if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
         undoTimeoutRef.current = setTimeout(() => {
@@ -317,14 +320,14 @@ function App() {
           setRecentlyDeleted([]);
         }, 5000);
       } else {
-        // No more to undo, hide button and clear timer
         setShowUndo(false);
         if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
       }
     }
   };
 
-  const handleEditTodo = (id, newTitle, newContent) => { // Edit todo
+  // handleEditTodo
+  const handleEditTodo = (id, newTitle, newContent) => { // Edit todo fields
     setTodos(todos.map(todo =>
       todo.id === id
         ? { ...todo, title: newTitle, content: newContent }
@@ -332,6 +335,7 @@ function App() {
     ));
   };
 
+  // handleToggleCompleted
   const handleToggleCompleted = (id) => { // Toggle completed status
     setTodos(prev =>
       prev.map(todo =>
@@ -342,12 +346,10 @@ function App() {
     );
   };
 
-  // Filter todos based on dropdown selection
-  const filteredTodos = todos.filter(todo => {
-    // Dropdown filter
+  // ======= FILTERED TODOS =======
+  const filteredTodos = todos.filter(todo => { // Filter by dropdown and search
     if (selectedOption === 'COMPLETE' && !todo.completed) return false;
     if (selectedOption === 'INCOMPLETE' && todo.completed) return false;
-    // Search filter
     const search = inputValue.trim().toLowerCase();
     if (!search) return true;
     return (
