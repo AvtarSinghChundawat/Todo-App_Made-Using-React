@@ -12,7 +12,7 @@ export const Todo = (props) => {
         <div
             className={`w-[100%] shrink-0 border-t-2 rounded-[3px] mt-[-1.5px]
                 ${props.isDark ? 'border-[#6C63FF]' : 'border-[#0d00ff]'} 
-                ${props.minimal ? 'pt-[11px]' : 'pt-[15px]'} py-2 
+                ${props.minimal ? 'pt-[14px]' : 'pt-[15px]'} py-2 
                 ${props.minimal ? 'px-0' : 'px-2'} 
                 flex justify-between items-start`
             }

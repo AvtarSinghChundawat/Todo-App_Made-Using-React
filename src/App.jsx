@@ -386,7 +386,7 @@ function App() {
   return (
     <div className={`wrapper w-screen flex justify-center relative h-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'}`}>
       <div className={`fullscreen ${fullscreen ? 'flex' : 'hidden'} flex-col items-center gap-[20px] absolute top-0 left-0 h-full w-full ${isDark ? 'bg-[#343434] text-white' : 'bg-[#FEF6C3] text-black'} p-5 border border-[#6C63FF] z-[400]`}>
-        <div className='border border-[#6C63FF] h-full w-full p-5 pt-0 flex flex-col rounded-[14px] overflow-y-auto scrollbar-custom relative'>
+        <div className='border border-[#6C63FF] h-full w-full px-5 pb-[12px] pt-0 flex flex-col rounded-[14px] overflow-y-auto scrollbar-custom relative'>
 
           {fullscreenTodo && (
             <>
