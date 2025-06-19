@@ -345,15 +345,6 @@ function App() {
     }
   };
 
-  // handleEditTodo
-  const handleEditTodo = (id, newTitle, newContent) => { // Edit todo fields
-    setTodos(todos.map(todo =>
-      todo.id === id
-        ? { ...todo, title: newTitle, content: newContent }
-        : todo
-    ));
-  };
-
   // handleToggleCompleted
   const handleToggleCompleted = (id) => { // Toggle completed status
     setTodos(prev =>
