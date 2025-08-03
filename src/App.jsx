@@ -516,7 +516,7 @@ function App() {
                     autoCorrect="off"
                     spellCheck={false}
                     onChange={(e) => setTodoContent(e.target.value)}
-                    className={`p-2 w-full rounded-[10px] border-[2px] ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'} resize-none scrollbar-custom h-[30vh] max-h-[40vh] sm:h-[40vh] sm:max-h-[40vh]`}
+                    className={`p-2 mb-10 w-full rounded-[10px] border-[2px] ${isDark ? 'border-[#6C63FF] bg-transparent text-white placeholder-white' : 'border-black caret-white'} resize-none scrollbar-custom h-[30vh] max-h-[40vh] sm:h-[40vh] sm:max-h-[40vh]`}
                     style={{
                       WebkitTextFillColor: isDark ? 'white' : 'white',
                     }}
