@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import close from './assets/close.svg';
-import plus from './assets/plus.svg';
 import './App.css';
 // import './output.css';
 import { Todo } from './components/todo.jsx';
 
 function App() {
+  const [filter, setFilter] = useState("all"); // default
+
   // ======= THEME (Dark/Light) =======
   // ======= THEME (Dark/Light) =======
   // ======= THEME (Dark/Light) =======
@@ -33,6 +32,10 @@ function App() {
   useEffect(() => { // Set theme from localStorage on mount
     const savedMode = localStorage.getItem('theme');
     if (savedMode) setIsDark(savedMode === 'dark');
+
+    const savedFilter = localStorage.getItem("filter")
+    console.log(savedFilter)
+    setFilter(savedFilter);
   }, []);
 
   // ======= MINIMAL MODE =======
@@ -91,12 +94,15 @@ function App() {
   }, []);
 
   const toggleDropdown = () => setIsOpen(!isOpen); // Toggle dropdown open/close
+  const toggleImport = () => setImportExport(!importexport);
 
   const handleOptionClick = (option) => { // Select dropdown option
     setSelectedOption(option);
     setIsOpen(false);
+    localStorage.setItem('filter', option)
   };
 
+  const importOptions = ['IMPORT', 'EXPORT']
   const options = ['ALL', 'COMPLETE', 'INCOMPLETE']; // Dropdown options
 
   // ======= MODAL (Add/Edit Todo) =======
@@ -258,6 +264,10 @@ function App() {
     };
   }, []);
 
+  // EXPORT/IMPORT
+  const [select, setSelect] = useState('IMPORT')
+  const [importexport, setImportExport] = useState(false)
+
   // ======= HANDLERS/FUNCTIONS =======
   // ======= HANDLERS/FUNCTIONS =======
   // ======= HANDLERS/FUNCTIONS =======
@@ -356,16 +366,83 @@ function App() {
     );
   };
 
+  // handleLocalStorage
+  function handleLocalStorage(selected) {
+    console.log('function called', selected)
+    if (selected === "EXPORT") {
+      setSelect(selected)
+      // Get todos from localStorage
+      const todos = JSON.parse(localStorage.getItem("todos")) || [];
+
+      // Convert to JSON string
+      const dataStr = JSON.stringify(todos, null, 2);
+
+      // Create a blob file
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      // Create a hidden link and click it
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "todos.json";
+      link.click();
+
+      // Cleanup
+      URL.revokeObjectURL(url);
+    }
+    else if (selected === "IMPORT") {
+      console.log(selected)
+      setSelect(selected)
+      // Create file input dynamically
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+
+      input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const importedTodos = JSON.parse(e.target.result);
+            // Save back to localStorage
+            localStorage.setItem("todos", JSON.stringify(importedTodos));
+            alert("Todos imported successfully!");
+            window.location.reload(); // optional: refresh UI
+          } catch (err) {
+            alert("Invalid JSON file");
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      input.click();
+    }
+  };
+
+
   // ======= FILTERED TODOS =======
   const filteredTodos = todos.filter(todo => { // Filter by dropdown and search
-    if (selectedOption === 'COMPLETE' && !todo.completed) return false;
-    if (selectedOption === 'INCOMPLETE' && todo.completed) return false;
-    const search = inputValue.trim().toLowerCase();
-    if (!search) return true;
-    return (
-      (todo.title && todo.title.toLowerCase().includes(search)) ||
-      (todo.content && todo.content.toLowerCase().includes(search))
-    );
+    if (!filter) {
+      if (selectedOption === 'COMPLETE' && !todo.completed) return false;
+      if (selectedOption === 'INCOMPLETE' && todo.completed) return false;
+      const search = inputValue.trim().toLowerCase();
+      if (!search) return true;
+      return (
+        (todo.title && todo.title.toLowerCase().includes(search)) ||
+        (todo.content && todo.content.toLowerCase().includes(search))
+      );
+    } else {
+      if (filter === 'COMPLETE' && !todo.completed) return false;
+      if (filter === 'INCOMPLETE' && todo.completed) return false;
+      const search = inputValue.trim().toLowerCase();
+      if (!search) return true;
+      return (
+        (todo.title && todo.title.toLowerCase().includes(search)) ||
+        (todo.content && todo.content.toLowerCase().includes(search))
+      );
+    }
   });
 
   // ======= RENDER =======
@@ -396,8 +473,40 @@ function App() {
   `}>Close</button>
       </div>
       <div className="main flex flex-col items-center relative w-[88%] sm:w-[70%]">
-        <div className={`w-[90%] sm:w-full`}>
-          <header className='flex w-full justify-center items-center p-5 text-[2em]'>TODO APP</header>
+        <div className={`w-[90%] flex flex-col items-center sm:w-full`}>
+          <header className='flex w-full justify-between items-center py-5'>
+            <div className='text-[1.5em] sm:text-[2em]'>TODO APP</div>
+            <div className='flex justify-between w-fit bg-[#6C63FF] rounded-[7px] hover:bg-[#7B73FF] hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] z-[99999]'
+            >
+              <div className='relative'>
+                <button onClick={() => toggleImport()} className={`flex cursor-pointer px-[15px] py-3 gap-3 ${isDark ? 'text-white' : 'text-black'}`}>
+                  <span className='capitalize'>{select}</span>
+                  <span className='dropdownSvgContainer flex gap-2'>
+                    <span></span>
+                    <svg fill='white' height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" className={`transition-transform duration-300 ${importexport ? 'rotate-180' : 'rotate-0'}`}>
+                      <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+                    </svg>
+                  </span>
+                  {importexport && (
+                    <div className={`absolute top-full left-0 mt-1 w-full ${isDark ? 'bg-[#333] text-white' : 'bg-[#FEF6C3] text-black'} rounded-[15px] shadow-lg border border-[#6C63FF] z-10`}>
+                      <ul className={`divide-y ${isDark ? 'divide-gray-200' : 'divide-[black]'} overflow-hidden`}>
+                        {importOptions.map((selected, index) => (
+                          <li
+                            key={index}
+                            onClick={() => handleLocalStorage(selected)}
+                            className={`flex items-center justify-start pr-[12px] pl-[15px] cursor-pointer ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-300'} transition first:rounded-t-[15px] last:rounded-b-[15px] text-[#6C63FF]`}
+                            style={{ height: `${buttonHeight}px` }}
+                          >
+                            {selected}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </button>
+              </div>
+            </div>
+          </header>
           <div className="search w-full flex gap-4">
             <div className={`rounded-[7px] input flex w-full gap-1 items-center border ${isDark ? 'border-white' : 'border-black'} pr-2 pl-2`}>
               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" fill={isDark ? 'white' : 'black'} viewBox="0 0 50 50">
@@ -425,7 +534,7 @@ function App() {
             <div className='dropdownBox flex justify-center gap-3.5'>
               <div className='drop dropdown relative' ref={dropdownRef}>
                 <button ref={buttonRef} onClick={toggleDropdown} className={`selector ${isDark ? 'text-white' : 'text-black'}`}>
-                  <span>{selectedOption}</span>
+                  <span>{filter ? filter : selectedOption}</span>
                   <span className='dropdownSvgContainer flex gap-2'>
                     <span></span>
                     <svg fill='white' height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
@@ -438,7 +547,10 @@ function App() {
                         {options.map((option, index) => (
                           <li
                             key={index}
-                            onClick={() => handleOptionClick(option)}
+                            onClick={() => {
+                              handleOptionClick(option)
+                              setFilter(option)
+                            }}
                             className={`flex items-center justify-start pr-[12px] pl-[15px] cursor-pointer ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-300'} transition first:rounded-t-[15px] last:rounded-b-[15px] text-[#6C63FF]`}
                             style={{ height: `${buttonHeight}px` }}
                           >
@@ -468,7 +580,7 @@ function App() {
             }} className={`cursor-pointer addTodo relative bg-[#6C63FF] rounded-[10px] flex justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] w-full text-white`} style={{ minHeight: `${buttonHeight}px` }}>
               <span className='h-[24px] flex justify-center items-center'>{`${minimal ? 'Normal View' : 'Seamless View'}`}</span>
             </button>
-            <button onClick={handleShowModal} className={`cursor-pointer z-[100] addTodo relative md:absolute md:bottom-[30px] md:right-[10px] bg-[#6C63FF] md:p-3 rounded-[50%] justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] ${minimal ? 'hidden' : 'flex'} md:min-h-auto `} style={{minHeight: `${buttonHeight}px`}}>
+            <button onClick={handleShowModal} className={`cursor-pointer z-[100] addTodo relative md:absolute md:bottom-[30px] md:right-[10px] bg-[#6C63FF] md:p-3 rounded-[50%] justify-center items-center hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] hover:bg-[#7B73FF] ${minimal ? 'hidden' : 'flex'} md:min-h-auto `} style={{ minHeight: `${buttonHeight}px` }}>
               <svg width="24px" height="24px" viewBox="-1.4 -1.4 22.80 22.80" xmlns="http://www.w3.org/2000/svg" fill="white" stroke="white" stroke-width="1.42"><g id="SVGRepo_bgCarrier" stroke-whiteidth="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="" stroke-whiteidth="0.24"></g><g id="SVGRepo_iconCarrier"> <path fill="white" d="M10,-1.77635684e-15 C10.4232029,-1.69861573e-15 10.7662767,0.343073746 10.7662767,0.766276659 L10.766,9.233 L19.2337233,9.23372334 C19.6569263,9.23372334 20,9.57679709 20,10 C20,10.4232029 19.6569263,10.7662767 19.2337233,10.7662767 L10.766,10.766 L10.7662767,19.2337233 C10.7662767,19.6569263 10.4232029,20 10,20 C9.57679709,20 9.23372334,19.6569263 9.23372334,19.2337233 L9.233,10.766 L0.766276659,10.7662767 C0.343073746,10.7662767 0,10.4232029 0,10 C0,9.57679709 0.343073746,9.23372334 0.766276659,9.23372334 L9.233,9.233 L9.23372334,0.766276659 C9.23372334,0.343073746 9.57679709,-1.85409795e-15 10,-1.77635684e-15 Z"></path> </g></svg>
             </button>
           </div>
