@@ -476,7 +476,7 @@ function App() {
         <div className={`w-[90%] flex flex-col items-center sm:w-full`}>
           <header className='flex w-full justify-between items-center py-5'>
             <div className='text-[1.5em] sm:text-[2em]'>TODO APP</div>
-            <div className='flex justify-between w-fit bg-[#6C63FF] rounded-[7px] hover:bg-[#7B73FF] hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] z-[99999]'
+            <div className='flex relative justify-between w-fit bg-[#6C63FF] rounded-[7px] hover:bg-[#7B73FF] hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] z-[399]'
             >
               <div className='relative'>
                 <button onClick={() => toggleImport()} className={`flex cursor-pointer px-[15px] py-3 gap-3 ${isDark ? 'text-white' : 'text-black'}`}>
@@ -586,7 +586,7 @@ function App() {
           </div>
         </div>
 
-        <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm min-h-screen w-screen z-[300] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className={`actualTodoWritingForm todoContent flex flex-col pt-3 items-center fixed top-[0] bg-black/50 left-0 backdrop-blur-sm min-h-screen w-screen z-[400] transition duration-1000 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
           <div className={`modalBox ${isVisible ? 'visible' : ''} flex flex-col h-screen sm:h-auto max-h-screen items-center gap-3 px-5 py-5 rounded-2xl w-full ${isDark ? 'border-[#6C63FF]' : 'border-[#FEF6C3]'}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
