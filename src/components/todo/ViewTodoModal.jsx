@@ -1,3 +1,5 @@
+'use client';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Edit2, Calendar, Clock } from 'lucide-react';
 import clsx from 'clsx';

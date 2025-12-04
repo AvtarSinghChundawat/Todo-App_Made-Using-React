@@ -110,35 +110,37 @@ body {
 
 /* Custom Overlay Scrollbar Theme */
 .os-theme-custom {
-    --os-size: 14px;
-    /* Wide */
+    --os-size: 16px;
     --os-padding-perpendicular: 2px;
     --os-padding-axis: 2px;
     --os-track-border-radius: 10px;
     --os-handle-border-radius: 50px;
-    /* Bullet shape */
     --os-handle-bg: #6C63FF;
     --os-handle-bg-hover: #5a52d5;
     --os-handle-bg-active: #483ebf;
-    --os-track-bg: rgba(0, 0, 0, 0.05);
-    /* Light mode track */
-    --os-track-bg-hover: rgba(0, 0, 0, 0.08);
-    --os-track-bg-active: rgba(0, 0, 0, 0.08);
+    --os-track-bg: rgba(0, 0, 0, 0.1);
+    /* Increased visibility */
+    --os-track-bg-hover: rgba(0, 0, 0, 0.15);
+    --os-track-bg-active: rgba(0, 0, 0, 0.15);
 }
 
-/* Dark mode overrides for scrollbar */
 .dark .os-theme-custom {
-    --os-track-bg: rgba(255, 255, 255, 0.05);
-    --os-track-bg-hover: rgba(255, 255, 255, 0.08);
-    --os-track-bg-active: rgba(255, 255, 255, 0.08);
+    --os-track-bg: rgba(255, 255, 255, 0.1);
+    /* Increased visibility */
+    --os-track-bg-hover: rgba(255, 255, 255, 0.15);
+    --os-track-bg-active: rgba(255, 255, 255, 0.15);
 }
 
-/* Adjust handle opacity/color */
+/* Track styles */
+.os-theme-custom .os-scrollbar-track {
+    background: var(--os-track-bg);
+}
+
+/* Handle styles */
 .os-theme-custom .os-scrollbar-handle {
     background: var(--os-handle-bg);
-    opacity: 0.4;
-    /* Subtle by default */
-    transition: opacity 0.3s, background-color 0.3s;
+    opacity: 0.8;
+    /* Much more visible */
     cursor: pointer;
 }
 
@@ -152,36 +154,40 @@ body {
     opacity: 1;
 }
 
-/* Force scrollbar to be always visible */
+/* Force visibility */
 .os-theme-custom .os-scrollbar {
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
+    z-index: 9999 !important;
+    background: transparent;
+    /* Ensure container is transparent */
 }
 
-.os-theme-custom .os-scrollbar-track,
-.os-theme-custom .os-scrollbar-handle {
+/* Ensure track is always visible */
+.os-theme-custom .os-scrollbar-track {
     opacity: 1 !important;
     visibility: visible !important;
+    background: var(--os-track-bg) !important;
+    /* Force background */
+    min-height: 100%;
+    /* Ensure it takes full height */
 }
 
-/* Ensure vertical scrollbar specifically is visible */
-.os-theme-custom.os-scrollbar-vertical {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Dim the scrollbar when it's unusable (no overflow) but keep it interactive */
-.os-theme-custom.os-scrollbar-unusable {
-    pointer-events: auto !important;
-}
-
+/* Unusable state (no overflow) - keep fully visible as requested */
 .os-theme-custom.os-scrollbar-unusable .os-scrollbar-handle {
-    opacity: 0.2 !important;
-    /* Dim but visible */
+    opacity: 0.3 !important;
+    /* Dim handle when not needed but keep visible if desired, or hide handle and keep track */
+    display: block !important;
+    /* Force display */
+}
+
+.os-theme-custom.os-scrollbar-unusable .os-scrollbar-track {
+    opacity: 1 !important;
+    display: block !important;
+    /* Force display */
 }
 
 .os-theme-custom.os-scrollbar-unusable:hover .os-scrollbar-handle {
-    opacity: 1 !important;
-    /* Glow on hover */
+    opacity: 0.5 !important;
 }

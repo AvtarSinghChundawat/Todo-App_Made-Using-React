@@ -1,15 +1,21 @@
+'use client';
+
 import { useState, useRef, useEffect } from 'react';
 import { Search, Plus, Moon, Sun, Download, Upload, ChevronDown, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
-import "overlayscrollbars/styles/overlayscrollbars.css";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 import { useTodos } from '../context/TodoContext';
 import TodoItem from '../components/todo/TodoItem';
 import TodoModal from '../components/todo/TodoModal';
 import ViewTodoModal from '../components/todo/ViewTodoModal';
 
 const Layout = () => {
+    const { data: session } = useSession();
+    const router = useRouter();
     const {
         filteredTodos,
         isDark,
@@ -40,6 +46,12 @@ const Layout = () => {
         }
     };
 
+    const handleLogout = () => {
+        if (window.confirm("Are you sure you want to logout?")) {
+            signOut();
+        }
+    };
+
     return (
         <div className={clsx(
             "h-screen w-full transition-colors duration-300 flex flex-col items-center p-7 sm:py-4 sm:px-6 lg:px-8 font-['Evo'] overflow-hidden",
@@ -48,61 +60,93 @@ const Layout = () => {
             <div className="w-full max-w-4xl flex flex-col gap-4 h-full">
 
                 {/* Header */}
-                <header className="flex items-center justify-between w-full">
+                <header className="flex flex-col sm:flex-row items-center justify-between w-full gap-4 sm:gap-0">
                     <h1 className="text-[2em] md:text-[2.5em] tracking-tight">TODO APP</h1>
 
-                    <div className="relative z-30">
-                        <button
-                            onClick={() => setIsImportOpen(!isImportOpen)}
-                            className={clsx(
-                                "flex items-center gap-2 px-4 py-2 rounded-[14px] transition-all shadow-lg",
-                                isDark ? "bg-[#6C63FF] text-white hover:bg-[#7B73FF]" : "bg-[#6C63FF] text-white hover:bg-[#7B73FF]",
-                                "hover:shadow-[0_0_10px_rgba(124,115,255,0.6)]"
-                            )}
-                        >
-                            <span className="uppercase tracking-wider font-bold text-sm">IMPORT</span>
-                            <ChevronDown size={18} className={clsx("transition-transform duration-300", isImportOpen && "rotate-180")} />
-                        </button>
+                    <div className="flex items-center gap-3 relative z-30 w-full sm:w-auto justify-center sm:justify-end">
+                        {/* Login / User Email */}
+                        {session?.user ? (
+                            <div
+                                onClick={handleLogout}
+                                className={clsx(
+                                    "flex items-center gap-2 px-4 py-2 rounded-[14px] shadow-lg transition-all border cursor-pointer group max-w-[200px] sm:max-w-none",
+                                    isDark ? "bg-[#333] border-[#6C63FF] text-white" : "bg-[#FEF6C3] border-[#6C63FF] text-black",
+                                    "hover:shadow-[0_0_10px_rgba(124,115,255,0.4)] hover:bg-opacity-80"
+                                )}
+                                title="Click to Logout"
+                            >
+                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse group-hover:bg-red-500 transition-colors shrink-0" />
+                                <span className="font-bold text-sm tracking-wide group-hover:text-red-400 transition-colors truncate">
+                                    {session.user.email}
+                                </span>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => router.push('/')}
+                                className={clsx(
+                                    "px-4 py-2 rounded-[14px] transition-all shadow-lg font-bold text-sm uppercase tracking-wider",
+                                    isDark ? "bg-[#6C63FF] text-white hover:bg-[#7B73FF]" : "bg-[#6C63FF] text-white hover:bg-[#7B73FF]",
+                                    "hover:shadow-[0_0_10px_rgba(124,115,255,0.6)]"
+                                )}
+                            >
+                                LOGIN
+                            </button>
+                        )}
 
-                        <AnimatePresence>
-                            {isImportOpen && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    className={clsx(
-                                        "absolute right-0 mt-2 w-48 rounded-[15px] shadow-xl border overflow-hidden z-50",
-                                        isDark ? "bg-[#333] border-[#6C63FF] text-white" : "bg-[#FEF6C3] border-[#6C63FF] text-black"
-                                    )}
-                                >
-                                    <button
-                                        onClick={handleImportClick}
+                        {/* Import Button */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsImportOpen(!isImportOpen)}
+                                className={clsx(
+                                    "flex items-center gap-2 px-4 py-2 rounded-[14px] transition-all shadow-lg",
+                                    isDark ? "bg-[#6C63FF] text-white hover:bg-[#7B73FF]" : "bg-[#6C63FF] text-white hover:bg-[#7B73FF]",
+                                    "hover:shadow-[0_0_10px_rgba(124,115,255,0.6)]"
+                                )}
+                            >
+                                <span className="uppercase tracking-wider font-bold text-sm">IMPORT</span>
+                                <ChevronDown size={18} className={clsx("transition-transform duration-300", isImportOpen && "rotate-180")} />
+                            </button>
+
+                            <AnimatePresence>
+                                {isImportOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
                                         className={clsx(
-                                            "w-full px-4 py-2 text-left flex items-center gap-2 transition-colors border-b",
-                                            isDark ? "hover:bg-gray-600 border-gray-600" : "hover:bg-gray-300 border-gray-300"
+                                            "absolute right-0 mt-2 w-48 rounded-[15px] shadow-xl border overflow-hidden z-50",
+                                            isDark ? "bg-[#333] border-[#6C63FF] text-white" : "bg-[#FEF6C3] border-[#6C63FF] text-black"
                                         )}
                                     >
-                                        <Upload size={16} /> Import JSON
-                                    </button>
-                                    <button
-                                        onClick={exportTodos}
-                                        className={clsx(
-                                            "w-full px-4 py-2 text-left flex items-center gap-2 transition-colors",
-                                            isDark ? "hover:bg-gray-600" : "hover:bg-gray-300"
-                                        )}
-                                    >
-                                        <Download size={16} /> Export JSON
-                                    </button>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        className="hidden"
-                                        accept=".json"
-                                        onChange={handleFileChange}
-                                    />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                        <button
+                                            onClick={handleImportClick}
+                                            className={clsx(
+                                                "w-full px-4 py-2 text-left flex items-center gap-2 transition-colors border-b",
+                                                isDark ? "hover:bg-gray-600 border-gray-600" : "hover:bg-gray-300 border-gray-300"
+                                            )}
+                                        >
+                                            <Upload size={16} /> Import JSON
+                                        </button>
+                                        <button
+                                            onClick={exportTodos}
+                                            className={clsx(
+                                                "w-full px-4 py-2 text-left flex items-center gap-2 transition-colors",
+                                                isDark ? "hover:bg-gray-600" : "hover:bg-gray-300"
+                                            )}
+                                        >
+                                            <Download size={16} /> Export JSON
+                                        </button>
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            className="hidden"
+                                            accept=".json"
+                                            onChange={handleFileChange}
+                                        />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </header>
 
@@ -192,6 +236,8 @@ const Layout = () => {
                     </div>
                 </div>
 
+
+
                 {/* Todo List Container */}
                 <div className="relative flex-1 w-full min-h-0">
                     {/* Visual Border Container */}
@@ -209,9 +255,15 @@ const Layout = () => {
                             scrollbars: {
                                 autoHide: 'never',
                                 theme: 'os-theme-custom',
+                                clickScroll: true,
+                                visibility: 'visible', // Force visibility
+                            },
+                            overflow: {
+                                x: 'hidden',
+                                y: 'scroll', // Force scroll behavior
                             }
                         }}
-                        defer
+                        style={{ height: '100%' }}
                     >
                         {filteredTodos.length > 0 ? (
                             <div className="flex flex-col gap-4 pb-20 p-4 pr-10"> {/* Added extra right padding to clear border */}
@@ -223,34 +275,16 @@ const Layout = () => {
                             </div>
                         ) : (
                             <div className={clsx(
-                                "flex flex-col items-center justify-center h-full opacity-50 pr-4",
+                                "flex flex-col items-center justify-center h-full opacity-50 pr-4 text-center",
                                 isDark ? "text-gray-400" : "text-gray-500"
                             )}>
-                                <p className="text-xl">No todos found</p>
+                                <p className="text-xl font-bold mb-2">Nothing here... suspicious 👀</p>
+                                <p className="text-sm">Time to create some chaos! 🚀</p>
                             </div>
                         )}
                     </OverlayScrollbarsComponent>
                 </div>
             </div>
-
-            {/* Undo Toast */}
-            <AnimatePresence>
-                {recentlyDeleted.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 50 }}
-                        className="fixed bottom-8 right-8 z-50"
-                    >
-                        <button
-                            onClick={undoDelete}
-                            className="bg-[#6C63FF] text-white px-6 py-3 rounded-xl shadow-lg font-bold hover:bg-[#5a52d5] transition-colors flex items-center gap-2"
-                        >
-                            Undo Delete ({recentlyDeleted.length})
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             <TodoModal />
             <ViewTodoModal />

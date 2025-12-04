@@ -1,11 +1,14 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import { Check, Trash2, Edit2, ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
 import { useTodos } from '../../context/TodoContext';
 
+import { forwardRef } from 'react';
 import { useState } from 'react';
 
-const TodoItem = ({ todo, index }) => {
+const TodoItem = forwardRef(({ todo, index }, ref) => {
     const { isDark, toggleCompleted, deleteTodo, setEditingId, setIsModalOpen, setTodoTitle, setTodoContent, openViewModal } = useTodos();
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -33,10 +36,11 @@ const TodoItem = ({ todo, index }) => {
 
     return (
         <motion.div
+            ref={ref}
             layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, x: -100 }}
+            initial={false}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
             className={clsx(
                 "group relative rounded-[13px] flex items-start justify-between gap-4 p-4 transition-all duration-200 bg-black/10",
                 index > 0 && "",
@@ -135,6 +139,8 @@ const TodoItem = ({ todo, index }) => {
             </div>
         </motion.div>
     );
-};
+});
+
+TodoItem.displayName = 'TodoItem';
 
 export default TodoItem;
