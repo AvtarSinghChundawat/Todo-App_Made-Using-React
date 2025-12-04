@@ -37,8 +37,8 @@ export const TodoProvider = ({ children }) => {
         }
         return [{
             id: Date.now(),
-            title: "Welcome!",
-            content: "<p>This is your new modern todo app. Try editing this text!</p>",
+            title: "Hey wassup",
+            content: "<p>Avtar this side, I made this todo app using vite and react, used tailwind css for styling and of course html, hope you like it :)</p>",
             completed: false
         }];
     });
