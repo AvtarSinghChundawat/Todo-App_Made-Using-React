@@ -55,13 +55,13 @@ const Layout = () => {
                         <button
                             onClick={() => setIsImportOpen(!isImportOpen)}
                             className={clsx(
-                                "flex items-center gap-2 px-4 py-3 rounded-[7px] transition-all shadow-lg",
+                                "flex items-center gap-2 px-4 py-2 rounded-[14px] transition-all shadow-lg",
                                 isDark ? "bg-[#6C63FF] text-white hover:bg-[#7B73FF]" : "bg-[#6C63FF] text-white hover:bg-[#7B73FF]",
                                 "hover:shadow-[0_0_10px_rgba(124,115,255,0.6)]"
                             )}
                         >
-                            <span className="uppercase tracking-wider font-bold">IMPORT</span>
-                            <ChevronDown size={20} className={clsx("transition-transform duration-300", isImportOpen && "rotate-180")} />
+                            <span className="uppercase tracking-wider font-bold text-sm">IMPORT</span>
+                            <ChevronDown size={18} className={clsx("transition-transform duration-300", isImportOpen && "rotate-180")} />
                         </button>
 
                         <AnimatePresence>
@@ -78,7 +78,7 @@ const Layout = () => {
                                     <button
                                         onClick={handleImportClick}
                                         className={clsx(
-                                            "w-full px-4 py-3 text-left flex items-center gap-2 transition-colors border-b",
+                                            "w-full px-4 py-2 text-left flex items-center gap-2 transition-colors border-b",
                                             isDark ? "hover:bg-gray-600 border-gray-600" : "hover:bg-gray-300 border-gray-300"
                                         )}
                                     >
@@ -87,7 +87,7 @@ const Layout = () => {
                                     <button
                                         onClick={exportTodos}
                                         className={clsx(
-                                            "w-full px-4 py-3 text-left flex items-center gap-2 transition-colors",
+                                            "w-full px-4 py-2 text-left flex items-center gap-2 transition-colors",
                                             isDark ? "hover:bg-gray-600" : "hover:bg-gray-300"
                                         )}
                                     >
@@ -107,43 +107,43 @@ const Layout = () => {
                 </header>
 
                 {/* Controls Bar */}
-                <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col md:flex-row gap-3 w-full">
                     {/* Search */}
                     <div className={clsx(
-                        "w-full flex items-center gap-3 px-4 py-3 rounded-[7px] border-[1px] transition-all",
+                        "w-full md:flex-1 flex items-center gap-3 px-3 py-1.5 rounded-[14px] border-[1px] transition-all",
                         isDark ? "bg-transparent border-white" : "bg-transparent border-black"
                     )}>
-                        <Search size={24} className={isDark ? "text-white" : "text-black"} />
+                        <Search size={20} className={isDark ? "text-white" : "text-black"} />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search Todo..."
                             className={clsx(
-                                "flex-1 bg-transparent border-none outline-none text-lg",
+                                "flex-1 bg-transparent border-none outline-none text-base",
                                 isDark ? "placeholder-gray-400 text-white" : "placeholder-gray-600 text-black"
                             )}
                         />
                         {searchQuery && (
                             <button onClick={() => setSearchQuery('')}>
-                                <X size={20} className={isDark ? "text-white" : "text-black"} />
+                                <X size={18} className={isDark ? "text-white" : "text-black"} />
                             </button>
                         )}
                     </div>
 
                     {/* Filters & Theme & View */}
-                    <div className="flex gap-3 w-full">
+                    <div className="flex gap-2 w-full md:w-auto">
                         {/* Filter Dropdown */}
-                        <div className="relative z-20">
+                        <div className="relative z-20 flex-1 md:flex-none">
                             <button
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 className={clsx(
-                                    "h-full px-4 py-3 rounded-[7px] flex items-center gap-2 justify-between transition-colors min-w-[120px]",
+                                    "h-full px-3 py-1.5 rounded-[14px] flex items-center gap-2 justify-between transition-colors w-full md:w-auto min-w-[110px]",
                                     "bg-[#6C63FF] text-white hover:bg-[#7B73FF] hover:shadow-[0_0_10px_rgba(124,115,255,0.6)]"
                                 )}
                             >
-                                <span className="font-medium uppercase">{filter === 'ALL' ? 'All' : filter}</span>
-                                <ChevronDown size={20} className={clsx("transition-transform duration-300", isDropdownOpen && "rotate-180")} />
+                                <span className="font-medium uppercase text-sm">{filter === 'ALL' ? 'All' : filter}</span>
+                                <ChevronDown size={18} className={clsx("transition-transform duration-300", isDropdownOpen && "rotate-180")} />
                             </button>
 
                             <AnimatePresence>
@@ -153,7 +153,7 @@ const Layout = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
                                         className={clsx(
-                                            "absolute top-full left-0 mt-2 w-full rounded-[15px] shadow-xl border overflow-hidden",
+                                            "absolute top-full right-0 mt-2 w-full md:w-40 rounded-[15px] shadow-xl border overflow-hidden",
                                             isDark ? "bg-[#333] border-[#6C63FF] text-white" : "bg-[#FEF6C3] border-[#6C63FF] text-black"
                                         )}
                                     >
@@ -162,7 +162,7 @@ const Layout = () => {
                                                 key={opt}
                                                 onClick={() => { setFilter(opt); setIsDropdownOpen(false); }}
                                                 className={clsx(
-                                                    "w-full px-4 py-3 text-left transition-colors border-b last:border-none",
+                                                    "w-full px-4 py-2 text-left transition-colors border-b last:border-none text-sm",
                                                     isDark ? "hover:bg-gray-600 border-gray-600" : "hover:bg-gray-300 border-gray-300"
                                                 )}
                                             >
@@ -177,52 +177,60 @@ const Layout = () => {
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
-                            className="p-3 rounded-[7px] bg-[#6C63FF] text-white hover:bg-[#7B73FF] hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] transition-all aspect-square flex items-center justify-center"
+                            className="p-2 rounded-[14px] bg-[#6C63FF] text-white hover:bg-[#7B73FF] hover:shadow-[0_0_10px_rgba(124,115,255,0.6)] transition-all aspect-square flex items-center justify-center"
                         >
-                            {isDark ? <Sun size={24} /> : <Moon size={24} />}
+                            {isDark ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
 
                         {/* Add Todo Button */}
                         <button
                             onClick={() => openModal()}
-                            className="flex-1 py-3 rounded-[10px] bg-[#6C63FF] text-white font-bold text-2xl hover:bg-[#7B73FF] shadow-[0_0_10px_rgba(124,115,255,0.6)] transition-all flex items-center justify-center"
+                            className="px-4 py-1.5 rounded-[14px] bg-[#6C63FF] text-white font-bold text-xl hover:bg-[#7B73FF] shadow-[0_0_10px_rgba(124,115,255,0.6)] transition-all flex items-center justify-center aspect-square"
                         >
-                            <Plus size={32} />
+                            <Plus size={24} />
                         </button>
                     </div>
                 </div>
 
                 {/* Todo List Container */}
-                <OverlayScrollbarsComponent
-                    className={clsx(
-                        "flex-1 rounded-[20px] border-[2px] p-4 relative w-full overflow-hidden",
-                        isDark ? "bg-transparent border-[#6C63FF]" : "bg-transparent border-[#6C63FF]"
-                    )}
-                    options={{
-                        scrollbars: {
-                            autoHide: 'leave',
-                            theme: isDark ? 'os-theme-light' : 'os-theme-dark',
-                        }
-                    }}
-                    defer
-                >
-                    {filteredTodos.length > 0 ? (
-                        <div className="flex flex-col gap-4 pb-20"> {/* Added padding bottom for scrolling space */}
-                            <AnimatePresence mode='popLayout'>
-                                {filteredTodos.map((todo, index) => (
-                                    <TodoItem key={todo.id} todo={todo} index={index} />
-                                ))}
-                            </AnimatePresence>
-                        </div>
-                    ) : (
-                        <div className={clsx(
-                            "flex flex-col items-center justify-center h-full opacity-50",
-                            isDark ? "text-gray-400" : "text-gray-500"
-                        )}>
-                            <p className="text-xl">No todos found</p>
-                        </div>
-                    )}
-                </OverlayScrollbarsComponent>
+                <div className="relative flex-1 w-full min-h-0">
+                    {/* Visual Border Container */}
+                    <div className={clsx(
+                        "absolute top-0 bottom-0 left-0 right-6 rounded-[20px] border-[2px] pointer-events-none z-10",
+                        isDark ? "border-[#6C63FF]" : "border-[#6C63FF]"
+                    )} />
+
+                    <OverlayScrollbarsComponent
+                        className={clsx(
+                            "h-full w-full",
+                            isDark ? "bg-transparent" : "bg-transparent"
+                        )}
+                        options={{
+                            scrollbars: {
+                                autoHide: 'never',
+                                theme: 'os-theme-custom',
+                            }
+                        }}
+                        defer
+                    >
+                        {filteredTodos.length > 0 ? (
+                            <div className="flex flex-col gap-4 pb-20 p-4 pr-10"> {/* Added extra right padding to clear border */}
+                                <AnimatePresence mode='popLayout'>
+                                    {filteredTodos.map((todo, index) => (
+                                        <TodoItem key={todo.id} todo={todo} index={index} />
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <div className={clsx(
+                                "flex flex-col items-center justify-center h-full opacity-50 pr-4",
+                                isDark ? "text-gray-400" : "text-gray-500"
+                            )}>
+                                <p className="text-xl">No todos found</p>
+                            </div>
+                        )}
+                    </OverlayScrollbarsComponent>
+                </div>
             </div>
 
             {/* Undo Toast */}

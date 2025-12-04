@@ -63,7 +63,7 @@ const TodoModal = () => {
                             options={{
                                 scrollbars: {
                                     autoHide: 'leave',
-                                    theme: isDark ? 'os-theme-light' : 'os-theme-dark',
+                                    theme: 'os-theme-custom',
                                 }
                             }}
                             defer

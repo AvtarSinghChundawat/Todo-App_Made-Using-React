@@ -41,3 +41,147 @@ body {
     height: 100vh;
     width: 100vw;
 }
+
+/* Global Prose Styles for Content */
+.prose ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.prose ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.prose li {
+    margin-bottom: 0.25em;
+}
+
+.prose h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    line-height: 1.2;
+}
+
+.prose h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    line-height: 1.2;
+}
+
+.prose h3 {
+    font-size: 1.17em;
+    font-weight: bold;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    line-height: 1.2;
+}
+
+.prose pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.prose code {
+    color: #616161;
+    background-color: rgba(97, 97, 97, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.dark .prose code {
+    color: #a9a9a9;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Custom Overlay Scrollbar Theme */
+.os-theme-custom {
+    --os-size: 14px;
+    /* Wide */
+    --os-padding-perpendicular: 2px;
+    --os-padding-axis: 2px;
+    --os-track-border-radius: 10px;
+    --os-handle-border-radius: 50px;
+    /* Bullet shape */
+    --os-handle-bg: #6C63FF;
+    --os-handle-bg-hover: #5a52d5;
+    --os-handle-bg-active: #483ebf;
+    --os-track-bg: rgba(0, 0, 0, 0.05);
+    /* Light mode track */
+    --os-track-bg-hover: rgba(0, 0, 0, 0.08);
+    --os-track-bg-active: rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode overrides for scrollbar */
+.dark .os-theme-custom {
+    --os-track-bg: rgba(255, 255, 255, 0.05);
+    --os-track-bg-hover: rgba(255, 255, 255, 0.08);
+    --os-track-bg-active: rgba(255, 255, 255, 0.08);
+}
+
+/* Adjust handle opacity/color */
+.os-theme-custom .os-scrollbar-handle {
+    background: var(--os-handle-bg);
+    opacity: 0.4;
+    /* Subtle by default */
+    transition: opacity 0.3s, background-color 0.3s;
+    cursor: pointer;
+}
+
+.os-theme-custom .os-scrollbar-handle:hover {
+    background: var(--os-handle-bg-hover);
+    opacity: 1;
+}
+
+.os-theme-custom .os-scrollbar-handle:active {
+    background: var(--os-handle-bg-active);
+    opacity: 1;
+}
+
+/* Force scrollbar to be always visible */
+.os-theme-custom .os-scrollbar {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.os-theme-custom .os-scrollbar-track,
+.os-theme-custom .os-scrollbar-handle {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Ensure vertical scrollbar specifically is visible */
+.os-theme-custom.os-scrollbar-vertical {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Dim the scrollbar when it's unusable (no overflow) but keep it interactive */
+.os-theme-custom.os-scrollbar-unusable {
+    pointer-events: auto !important;
+}
+
+.os-theme-custom.os-scrollbar-unusable .os-scrollbar-handle {
+    opacity: 0.2 !important;
+    /* Dim but visible */
+}
+
+.os-theme-custom.os-scrollbar-unusable:hover .os-scrollbar-handle {
+    opacity: 1 !important;
+    /* Glow on hover */
+}

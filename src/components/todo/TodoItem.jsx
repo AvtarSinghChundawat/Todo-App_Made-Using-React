@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
-import { Check, Trash2, Edit2 } from 'lucide-react';
+import { Check, Trash2, Edit2, ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
 import { useTodos } from '../../context/TodoContext';
 
+import { useState } from 'react';
+
 const TodoItem = ({ todo, index }) => {
     const { isDark, toggleCompleted, deleteTodo, setEditingId, setIsModalOpen, setTodoTitle, setTodoContent, openViewModal } = useTodos();
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const handleEdit = () => {
         setEditingId(todo.id);
@@ -17,6 +20,17 @@ const TodoItem = ({ todo, index }) => {
         openViewModal(todo);
     };
 
+    // Helper to determine if content is "long"
+    const isContentLong = (html) => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        const text = tempDiv.textContent || tempDiv.innerText || '';
+        // Check if text is long OR if there are many line breaks/paragraphs
+        return text.length > 300 || (html.match(/<br>|<\/p>|<li>/g) || []).length > 3;
+    };
+
+    const showReadMore = isContentLong(todo.content);
+
     return (
         <motion.div
             layout
@@ -24,11 +38,11 @@ const TodoItem = ({ todo, index }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -100 }}
             className={clsx(
-                "group relative rounded-[13px] flex items-start justify-between gap-4 py-3 px-2 transition-all duration-200",
-                index > 0 && "border-t-2 mt-[-2px]",
+                "group relative rounded-[13px] flex items-start justify-between gap-4 p-4 transition-all duration-200 bg-black/10",
+                index > 0 && "",
                 isDark
-                    ? (index > 0 ? "border-[#6C63FF]" : "") + " hover:bg-white/5"
-                    : (index > 0 ? "border-[#0d00ff]" : "") + " hover:bg-black/5",
+                    ? (index > 0 ? "border-[#6C63FF]" : "") + " hover:bg-black/30"
+                    : (index > 0 ? "border-[#0d00ff]" : "") + " hover:bg-black/20",
                 todo.completed && "opacity-60"
             )}
         >
@@ -36,7 +50,7 @@ const TodoItem = ({ todo, index }) => {
                 <button
                     onClick={() => toggleCompleted(todo.id)}
                     className={clsx(
-                        "mt-1 flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors",
+                        "mt-1 flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors cursor-pointer",
                         todo.completed
                             ? "bg-[#6C63FF] border-[#6C63FF]"
                             : (isDark ? "border-gray-400 hover:border-[#6C63FF]" : "border-gray-500 hover:border-[#6C63FF]")
@@ -60,13 +74,40 @@ const TodoItem = ({ todo, index }) => {
                     {/* Render HTML content safely */}
                     <div
                         className={clsx(
-                            "prose prose-sm max-w-none line-clamp-3 cursor-pointer",
+                            "prose prose-sm max-w-none cursor-pointer transition-all duration-300",
                             isDark ? "prose-invert text-white" : "text-black",
-                            todo.completed && "line-through opacity-70"
+                            todo.completed && "line-through opacity-70",
+                            !isExpanded && "line-clamp-3"
                         )}
                         dangerouslySetInnerHTML={{ __html: todo.content }}
                         onClick={handleView}
                     />
+
+                    {/* Read More / Show Less Button */}
+                    {showReadMore && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsExpanded(!isExpanded);
+                            }}
+                            className={clsx(
+                                "flex items-center gap-1 text-xs font-bold mt-2 px-3 py-1.5 rounded-full transition-all focus:outline-none",
+                                isDark
+                                    ? "bg-white/10 hover:bg-white/20 text-[#6C63FF]"
+                                    : "bg-black/5 hover:bg-black/10 text-[#6C63FF]"
+                            )}
+                        >
+                            {isExpanded ? (
+                                <>
+                                    Show Less <ChevronUp size={14} />
+                                </>
+                            ) : (
+                                <>
+                                    Read More <ChevronDown size={14} />
+                                </>
+                            )}
+                        </button>
+                    )}
                 </div>
             </div>
 
