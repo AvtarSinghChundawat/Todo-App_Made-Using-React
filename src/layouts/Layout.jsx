@@ -42,7 +42,7 @@ const Layout = () => {
 
     return (
         <div className={clsx(
-            "h-screen w-full transition-colors duration-300 flex flex-col items-center p-10 sm:py-4 sm:px-6 lg:px-8 font-['Evo'] overflow-hidden",
+            "h-screen w-full transition-colors duration-300 flex flex-col items-center p-7 sm:py-4 sm:px-6 lg:px-8 font-['Evo'] overflow-hidden",
             isDark ? "bg-[#343434] text-white" : "bg-[#FEF6C3] text-gray-900"
         )}>
             <div className="w-full max-w-4xl flex flex-col gap-4 h-full">
