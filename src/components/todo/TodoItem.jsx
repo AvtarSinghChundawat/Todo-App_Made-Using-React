@@ -24,7 +24,7 @@ const TodoItem = ({ todo, index }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -100 }}
             className={clsx(
-                "group relative flex items-start justify-between gap-4 py-3 px-2 transition-all duration-200",
+                "group relative rounded-[13px] flex items-start justify-between gap-4 py-3 px-2 transition-all duration-200",
                 index > 0 && "border-t-2 mt-[-2px]",
                 isDark
                     ? (index > 0 ? "border-[#6C63FF]" : "") + " hover:bg-white/5"
@@ -74,7 +74,7 @@ const TodoItem = ({ todo, index }) => {
                 <button
                     onClick={handleEdit}
                     className={clsx(
-                        "p-1 rounded transition-colors group/edit",
+                        "p-1 rounded cursor-pointer transition-colors group/edit",
                         isDark ? "text-white hover:text-green-400" : "text-black hover:text-green-400"
                     )}
                     title="Edit"
@@ -84,7 +84,7 @@ const TodoItem = ({ todo, index }) => {
                 <button
                     onClick={() => deleteTodo(todo.id)}
                     className={clsx(
-                        "p-1 rounded transition-colors group/delete",
+                        "p-1 rounded cursor-pointer transition-colors group/delete",
                         isDark ? "text-white hover:text-red-500" : "text-black hover:text-red-500"
                     )}
                     title="Delete"
