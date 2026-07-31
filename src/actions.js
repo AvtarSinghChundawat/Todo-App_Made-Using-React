@@ -37,7 +37,6 @@ export async function createTodo(data) {
     if (!session?.user?.email) throw new Error('Unauthorized');
 
     await dbConnect();
-    await dbConnect();
     console.log("Creating todo for user (email):", session.user.email);
     console.log("Full Session User Object:", JSON.stringify(session.user, null, 2));
     console.log("Todo Data:", data);

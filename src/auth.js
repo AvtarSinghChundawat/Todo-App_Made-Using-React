@@ -1,8 +1,6 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
-import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
-import { compare } from 'bcryptjs';
 import dbConnect from './lib/db';
 import User from './models/User';
 
@@ -17,23 +15,6 @@ export const {
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        }),
-        Credentials({
-            async authorize(credentials) {
-                const { email, password } = credentials;
-
-                await dbConnect();
-                const user = await User.findOne({ email }).select('+password');
-
-                if (!user) return null;
-                if (!user.password) return null; // User might have signed up with Google
-
-                const passwordsMatch = await compare(password, user.password);
-
-                if (passwordsMatch) return user;
-
-                return null;
-            },
         }),
     ],
     callbacks: {
