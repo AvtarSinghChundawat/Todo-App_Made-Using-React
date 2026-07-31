@@ -18,7 +18,7 @@ export async function getTodos() {
     console.log("getTodos: Fetching todos for email:", session.user.email);
 
     await dbConnect();
-    const todos = await Todo.find({ userEmail: session.user.email }).sort({ createdAt: -1 });
+    const todos = await Todo.find({ userEmail: session.user.email, deletedAt: null }).sort({ createdAt: -1 });
 
     // Convert _id to string to avoid serialization issues
     return todos.map(todo => ({
@@ -106,7 +106,68 @@ export async function deleteTodo(id) {
     if (!session?.user?.email) throw new Error('Unauthorized');
 
     await dbConnect();
-    await Todo.findOneAndDelete({ _id: id, userEmail: session.user.email });
+    // Soft delete: move to the trash instead of removing it outright, so it
+    // can be restored later. MongoDB's TTL index on `deletedAt` (see Todo.js)
+    // permanently removes it 30 days after this point on its own.
+    await Todo.findOneAndUpdate(
+        { _id: id, userEmail: session.user.email },
+        { deletedAt: new Date() }
+    );
+    revalidatePath('/dashboard');
+}
+
+export async function getTrash() {
+    const session = await auth();
+    if (!session?.user?.email) return [];
+
+    await dbConnect();
+    const todos = await Todo.find({
+        userEmail: session.user.email,
+        deletedAt: { $ne: null },
+    }).sort({ deletedAt: -1 });
+
+    return todos.map(todo => ({
+        ...todo.toObject(),
+        id: todo._id.toString(),
+        _id: todo._id.toString(),
+        userId: todo.userId.toString(),
+        userEmail: todo.userEmail,
+        createdAt: todo.createdAt.toISOString(),
+        updatedAt: todo.updatedAt.toISOString(),
+        deletedAt: todo.deletedAt.toISOString(),
+    }));
+}
+
+export async function restoreTodo(id) {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error('Unauthorized');
+
+    await dbConnect();
+    const restored = await Todo.findOneAndUpdate(
+        { _id: id, userEmail: session.user.email, deletedAt: { $ne: null } },
+        { deletedAt: null },
+        { new: true }
+    );
+    revalidatePath('/dashboard');
+    if (!restored) return null;
+
+    return {
+        ...restored.toObject(),
+        id: restored._id.toString(),
+        _id: restored._id.toString(),
+        userId: restored.userId.toString(),
+        userEmail: restored.userEmail,
+        createdAt: restored.createdAt.toISOString(),
+        updatedAt: restored.updatedAt.toISOString(),
+    };
+}
+
+export async function permanentlyDeleteTodo(id) {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error('Unauthorized');
+
+    await dbConnect();
+    await Todo.findOneAndDelete({ _id: id, userEmail: session.user.email, deletedAt: { $ne: null } });
     revalidatePath('/dashboard');
 }
 

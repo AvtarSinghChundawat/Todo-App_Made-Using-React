@@ -8,7 +8,10 @@ import {
     updateTodo,
     deleteTodo as deleteTodoAction,
     syncLocalTodos,
-    toggleTodoCompletion as toggleTodoCompletionAction
+    toggleTodoCompletion as toggleTodoCompletionAction,
+    getTrash,
+    restoreTodo as restoreTodoAction,
+    permanentlyDeleteTodo as permanentlyDeleteTodoAction
 } from '../actions';
 import Loader from '../components/ui/Loader';
 
@@ -186,7 +189,7 @@ export const TodoProvider = ({ children }) => {
         setTodos(prev => prev.filter(todo => todo.id !== id));
         setRecentlyDeleted(prev => [todoToDelete, ...prev]);
 
-        // Immediate Delete from DB
+        // Soft delete: lands in the trash instead of being lost outright
         if (status === 'authenticated') {
             try {
                 await deleteTodoAction(id);
@@ -195,6 +198,11 @@ export const TodoProvider = ({ children }) => {
                 // Revert if failed
                 setTodos(prev => [todoToDelete, ...prev]);
             }
+        } else {
+            // Guest mode: move it into the local trash (persists 30 days)
+            const trashed = { ...todoToDelete, deletedAt: new Date().toISOString() };
+            const stored = JSON.parse(localStorage.getItem('trash') || '[]');
+            localStorage.setItem('trash', JSON.stringify([trashed, ...stored]));
         }
 
         // Clear from recently deleted after 5 seconds (just for UI)
@@ -212,20 +220,95 @@ export const TodoProvider = ({ children }) => {
             setTodos(prev => [lastDeleted, ...prev]);
 
             if (status === 'authenticated') {
-                // Re-create in DB since we deleted it
+                // Same document, just un-deleted - no need to recreate it
                 try {
-                    const restored = await createTodo({
-                        title: lastDeleted.title,
-                        content: lastDeleted.content
-                    });
-                    // Update ID
-                    setTodos(prev => prev.map(t => t.id === lastDeleted.id ? restored : t));
+                    await restoreTodoAction(lastDeleted.id);
                 } catch (error) {
                     console.error("Failed to restore todo", error);
                     setTodos(prev => prev.filter(t => t.id !== lastDeleted.id));
                 }
+            } else {
+                const stored = JSON.parse(localStorage.getItem('trash') || '[]');
+                localStorage.setItem('trash', JSON.stringify(stored.filter(t => t.id !== lastDeleted.id)));
             }
         }
+    };
+
+    // ======= CONFIRM DIALOG =======
+    const [confirmDialog, setConfirmDialog] = useState({
+        isOpen: false,
+        title: '',
+        message: '',
+        confirmLabel: '',
+        danger: false,
+        onConfirm: null,
+    });
+
+    const requestConfirm = ({ title, message, confirmLabel, danger = false, onConfirm }) => {
+        setConfirmDialog({ isOpen: true, title, message, confirmLabel, danger, onConfirm });
+    };
+
+    const closeConfirmDialog = () => {
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+    };
+
+    // ======= TRASH (soft-deleted todos, restorable for 30 days) =======
+    const [trash, setTrash] = useState([]);
+    const [isTrashOpen, setIsTrashOpen] = useState(false);
+    const TRASH_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+
+    const fetchTrash = async () => {
+        if (status === 'authenticated') {
+            const items = await getTrash();
+            setTrash(items);
+        } else {
+            const stored = JSON.parse(localStorage.getItem('trash') || '[]');
+            // Guest mode has no DB TTL index to auto-purge for us, so do it here
+            const fresh = stored.filter(t => Date.now() - new Date(t.deletedAt).getTime() < TRASH_RETENTION_MS);
+            if (fresh.length !== stored.length) {
+                localStorage.setItem('trash', JSON.stringify(fresh));
+            }
+            setTrash(fresh);
+        }
+    };
+
+    const openTrash = () => {
+        setIsTrashOpen(true);
+        fetchTrash();
+    };
+    const closeTrash = () => setIsTrashOpen(false);
+
+    const restoreFromTrash = async (id) => {
+        if (status === 'authenticated') {
+            const restored = await restoreTodoAction(id);
+            if (restored) {
+                setTodos(prev => [restored, ...prev]);
+                setTrash(prev => prev.filter(t => t.id !== id));
+            }
+        } else {
+            const item = trash.find(t => t.id === id);
+            if (!item) return;
+            const { deletedAt, ...restoredTodo } = item;
+            setTodos(prev => [restoredTodo, ...prev]);
+            setTrash(prev => {
+                const next = prev.filter(t => t.id !== id);
+                localStorage.setItem('trash', JSON.stringify(next));
+                return next;
+            });
+        }
+    };
+
+    const permanentlyDelete = async (id) => {
+        if (status === 'authenticated') {
+            await permanentlyDeleteTodoAction(id);
+        }
+        setTrash(prev => {
+            const next = prev.filter(t => t.id !== id);
+            if (status !== 'authenticated') {
+                localStorage.setItem('trash', JSON.stringify(next));
+            }
+            return next;
+        });
     };
 
     const toggleCompleted = async (id) => {
@@ -366,6 +449,15 @@ export const TodoProvider = ({ children }) => {
             importTodos,
             exportTodos,
             recentlyDeleted,
+            trash,
+            isTrashOpen,
+            openTrash,
+            closeTrash,
+            restoreFromTrash,
+            permanentlyDelete,
+            confirmDialog,
+            requestConfirm,
+            closeConfirmDialog,
             isModalOpen,
             setIsModalOpen,
             editingId,

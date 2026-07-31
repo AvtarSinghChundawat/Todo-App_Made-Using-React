@@ -5,6 +5,7 @@ import "../App.css"; // Import custom styles (Fonts, Scrollbar)
 import { TodoProvider } from "../context/TodoContext";
 import { SessionProvider } from "next-auth/react";
 import PwaRegister from "../components/PwaRegister";
+import OfflineBanner from "../components/OfflineBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
                     </TodoProvider>
                 </SessionProvider>
                 <PwaRegister />
+                <OfflineBanner />
             </body>
         </html>
     );

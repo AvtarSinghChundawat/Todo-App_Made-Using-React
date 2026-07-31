@@ -9,7 +9,7 @@ import { forwardRef } from 'react';
 import { useState } from 'react';
 
 const TodoItem = forwardRef(({ todo, index }, ref) => {
-    const { isDark, toggleCompleted, deleteTodo, setEditingId, setIsModalOpen, setTodoTitle, setTodoContent, openViewModal } = useTodos();
+    const { isDark, toggleCompleted, deleteTodo, setEditingId, setIsModalOpen, setTodoTitle, setTodoContent, openViewModal, requestConfirm } = useTodos();
     const [isExpanded, setIsExpanded] = useState(false);
 
     const handleEdit = () => {
@@ -21,6 +21,16 @@ const TodoItem = forwardRef(({ todo, index }, ref) => {
 
     const handleView = () => {
         openViewModal(todo);
+    };
+
+    const handleDelete = () => {
+        requestConfirm({
+            title: 'Delete Todo',
+            message: `Delete "${todo.title}"? You can restore it from the trash within 30 days.`,
+            confirmLabel: 'Delete',
+            danger: true,
+            onConfirm: () => deleteTodo(todo.id),
+        });
     };
 
     // Helper to determine if content is "long"
@@ -127,7 +137,7 @@ const TodoItem = forwardRef(({ todo, index }, ref) => {
                     <Edit2 size={18} />
                 </button>
                 <button
-                    onClick={() => deleteTodo(todo.id)}
+                    onClick={handleDelete}
                     className={clsx(
                         "p-1 rounded cursor-pointer transition-colors group/delete",
                         isDark ? "text-white hover:text-red-500" : "text-black hover:text-red-500"

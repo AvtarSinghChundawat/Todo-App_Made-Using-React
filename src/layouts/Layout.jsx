@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Search, Plus, Moon, Sun, Download, Upload, ChevronDown, X } from 'lucide-react';
+import { Search, Plus, Moon, Sun, Download, Upload, ChevronDown, X, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
@@ -12,6 +12,8 @@ import { useTodos } from '../context/TodoContext';
 import TodoItem from '../components/todo/TodoItem';
 import TodoModal from '../components/todo/TodoModal';
 import ViewTodoModal from '../components/todo/ViewTodoModal';
+import TrashModal from '../components/todo/TrashModal';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const Layout = () => {
     const { data: session } = useSession();
@@ -28,7 +30,9 @@ const Layout = () => {
         importTodos,
         exportTodos,
         undoDelete,
-        recentlyDeleted
+        recentlyDeleted,
+        openTrash,
+        requestConfirm
     } = useTodos();
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,9 +51,13 @@ const Layout = () => {
     };
 
     const handleLogout = () => {
-        if (window.confirm("Are you sure you want to logout?")) {
-            signOut();
-        }
+        requestConfirm({
+            title: 'Logout',
+            message: 'Are you sure you want to logout?',
+            confirmLabel: 'Logout',
+            danger: true,
+            onConfirm: () => signOut(),
+        });
     };
 
     return (
@@ -57,7 +65,7 @@ const Layout = () => {
             "h-screen w-full transition-colors duration-300 flex flex-col items-center p-7 sm:py-4 sm:px-6 lg:px-8 font-['Evo'] overflow-hidden",
             isDark ? "bg-[#343434] text-white" : "bg-[#FEF6C3] text-gray-900"
         )}>
-            <div className="w-full max-w-4xl flex flex-col gap-4 h-full">
+            <div className="w-full max-w-[1330px] flex flex-col gap-4 h-full">
 
                 {/* Header */}
                 <header className="flex flex-col sm:flex-row items-center justify-between w-full gap-4 sm:gap-0">
@@ -92,6 +100,19 @@ const Layout = () => {
                                 LOGIN
                             </button>
                         )}
+
+                        {/* Trash Button */}
+                        <button
+                            onClick={openTrash}
+                            title="Trash"
+                            className={clsx(
+                                "p-2 rounded-[14px] transition-all shadow-lg aspect-square flex items-center justify-center",
+                                isDark ? "bg-[#6C63FF] text-white hover:bg-[#7B73FF]" : "bg-[#6C63FF] text-white hover:bg-[#7B73FF]",
+                                "hover:shadow-[0_0_10px_rgba(124,115,255,0.6)]"
+                            )}
+                        >
+                            <Trash2 size={18} />
+                        </button>
 
                         {/* Import Button */}
                         <div className="relative">
@@ -288,6 +309,8 @@ const Layout = () => {
 
             <TodoModal />
             <ViewTodoModal />
+            <TrashModal />
+            <ConfirmDialog />
         </div>
     );
 };

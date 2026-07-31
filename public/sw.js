@@ -18,6 +18,11 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
+    // Let connectivity pings hit the real network untouched — if we served
+    // these from cache like everything else, a real outage would look like
+    // a successful check and the offline banner would never show.
+    if (event.request.headers.get('x-connectivity-check')) return;
+
     event.respondWith(
         (async () => {
             const cache = await caches.open(CACHE_NAME);

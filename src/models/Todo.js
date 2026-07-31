@@ -21,7 +21,17 @@ const TodoSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    deletedAt: {
+        type: Date,
+        default: null,
+    },
 }, { timestamps: true });
+
+// MongoDB only expires documents where this field holds an actual Date -
+// active todos keep deletedAt: null and are never touched. The moment a
+// todo is soft-deleted (deletedAt set to now), Mongo's background TTL
+// monitor removes it ~30 days later on its own, no cron job required.
+TodoSchema.index({ deletedAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
 // Force model recompilation to pick up schema changes
 if (mongoose.models.TodoV2) {
