@@ -71,20 +71,20 @@ const Layout = () => {
                 <header className="flex flex-col sm:flex-row items-center justify-between w-full gap-4 sm:gap-0">
                     <h1 className="text-[2em] md:text-[2.5em] tracking-tight">TODO APP</h1>
 
-                    <div className="flex items-center gap-3 relative z-30 w-full sm:w-auto justify-center sm:justify-end">
+                    <div className="flex flex-nowrap items-center gap-2 sm:gap-3 relative z-30 w-full sm:w-auto sm:justify-end">
                         {/* Login / User Email */}
                         {session?.user ? (
                             <div
                                 onClick={handleLogout}
                                 className={clsx(
-                                    "flex items-center gap-2 px-4 py-2 rounded-[14px] shadow-lg transition-all border cursor-pointer group max-w-[200px] sm:max-w-none",
+                                    "flex items-center gap-2 px-2 sm:px-4 py-2 rounded-[14px] shadow-lg transition-all border cursor-pointer group min-w-0 flex-1 sm:flex-none sm:max-w-none",
                                     isDark ? "bg-[#333] border-[#6C63FF] text-white" : "bg-[#FEF6C3] border-[#6C63FF] text-black",
                                     "hover:shadow-[0_0_10px_rgba(124,115,255,0.4)] hover:bg-opacity-80"
                                 )}
-                                title="Click to Logout"
+                                title={session.user.email}
                             >
                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse group-hover:bg-red-500 transition-colors shrink-0" />
-                                <span className="font-bold text-sm tracking-wide group-hover:text-red-400 transition-colors truncate">
+                                <span className="font-bold text-sm tracking-wide group-hover:text-red-400 transition-colors truncate min-w-0">
                                     {session.user.email}
                                 </span>
                             </div>
@@ -106,7 +106,7 @@ const Layout = () => {
                             onClick={openTrash}
                             title="Trash"
                             className={clsx(
-                                "p-2 rounded-[14px] transition-all shadow-lg aspect-square flex items-center justify-center",
+                                "p-2 rounded-[14px] transition-all shadow-lg aspect-square flex items-center justify-center shrink-0",
                                 isDark ? "bg-[#6C63FF] text-white hover:bg-[#7B73FF]" : "bg-[#6C63FF] text-white hover:bg-[#7B73FF]",
                                 "hover:shadow-[0_0_10px_rgba(124,115,255,0.6)]"
                             )}
@@ -115,7 +115,7 @@ const Layout = () => {
                         </button>
 
                         {/* Import Button */}
-                        <div className="relative">
+                        <div className="relative shrink-0">
                             <button
                                 onClick={() => setIsImportOpen(!isImportOpen)}
                                 className={clsx(
