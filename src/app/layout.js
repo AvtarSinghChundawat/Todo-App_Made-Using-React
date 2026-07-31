@@ -4,12 +4,22 @@ import "overlayscrollbars/styles/overlayscrollbars.css"; // Import OverlayScroll
 import "../App.css"; // Import custom styles (Fonts, Scrollbar)
 import { TodoProvider } from "../context/TodoContext";
 import { SessionProvider } from "next-auth/react";
+import PwaRegister from "../components/PwaRegister";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
     title: "Todo App",
     description: "A simple todo app with Next.js and MongoDB",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "Todo App",
+    },
+};
+
+export const viewport = {
+    themeColor: "#4f46e5",
 };
 
 export default function RootLayout({ children }) {
@@ -21,6 +31,7 @@ export default function RootLayout({ children }) {
                         {children}
                     </TodoProvider>
                 </SessionProvider>
+                <PwaRegister />
             </body>
         </html>
     );
